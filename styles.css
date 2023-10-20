@@ -3,23 +3,72 @@ html, body {
     padding: 0;
 }
 
+* {
+    box-sizing: border-box;
+}
+
+/* Main section */
+
 .chess-board-page {
+    float: left;
     display: flex;
-    justify-content: center;
+    width: 80%;
+    padding: 10px;
+    justify-content: space-around;
     align-items: center;
     height: 100vh;
-    width: 100vw;
+    /* width: 100vw; */
+    /* border: 1px solid black; */
+}
+
+.captured-pieces {
+    border-radius: 2vh;
+    float: left;
+    width: 25%;
+    border: 1px solid black;
+    height:80vh;
+    margin:5vh;
 }
 
 .chess-board {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    width: 30rem;
-    height: 30rem;
+    width: 52rem;
+    height: 52rem;
     border: 1px solid black;
 }
 
+/* Info section */
+.info-page {
+    float: left;
+    display: flex;
+    width: 20%;
+    height: 100vh;
+    border: 1px solid black;
+    padding: 10px;
+    box-sizing: border-box;
+    /* content: ""; */
+    display: table;
+    /* clear: both; */
+}
+
+.info-window {
+    margin: auto;
+    margin-top: 1em;
+    border: 1px solid black;
+    /* padding: ; */
+    width: 90%;
+    height:40%;
+}
+
+.save-controls {    
+    /* Need to finish button layout */
+    list-style-type: none;
+}
+
+
+/* Chessboard for js */
 .square {
     display: flex;
     justify-content: center;
