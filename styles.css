@@ -1,0 +1,41 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.chess-board-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+.chess-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    width: 30rem;
+    height: 30rem;
+    border: 1px solid black;
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.square p {
+    padding: 0;
+    margin: 0;
+    font-size: 40px;
+}
+
+.white {
+    background-color: beige;
+}
+
+.black {
+    background-color: #55828b;
+}
