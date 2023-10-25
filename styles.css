@@ -1,6 +1,7 @@
 html, body {
     margin: 0;
     padding: 0;
+    --main-font: 'Courier New', Courier, monospace;
 }
 
 * {
@@ -61,11 +62,23 @@ html, body {
     width: 90%;
     height:40%;
 }
+.info-window h1, h2{
+    text-align: center;
+    font-family: var(--main-font);
+}
 
+/* Save controls */
 .save-controls {    
     /* Need to finish button layout */
     list-style-type: none;
 }
+.save-controls button {
+    padding: .75em;
+    width: 22em;
+    border-radius: 1vh;
+    font-family: var(--main-font);
+}
+
 
 
 /* Chessboard for js */
