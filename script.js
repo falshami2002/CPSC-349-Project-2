@@ -163,3 +163,158 @@ let sample = new Game();
 sample.loadGameFromFEN(FEN);
 sample.drawGame();
 console.log(sample.saveGameToFEN());
+//Rook class
+class Rook {
+    constructor(color, id) {
+        this.color = color;
+        this.id = id;
+    }
+    availableSquares() {
+        let x = parseInt(this.id.split('-')[0]);
+        let y = parseInt(this.id.split('-')[1]);
+        let available = [];
+        for (let i = x;i>=0;i--) {
+            available.push(i+'-'+y);
+        }
+        for (let i = x;i<=7;i++) {
+            available.push(i+'-'+y);
+        }
+        for (let i = y;i>=0;i++) {
+            available.push(x+'-'+i);
+        }
+        for (let i = y;i<=7;i++) {
+            available.push(x+'-'+i);
+        }
+        return available;
+    }
+}
+
+//Knight class
+class Knight {
+    constructor(color, id) {
+        this.color = color;
+        this.id = id;
+    }
+    availableSquares() {
+        let x = parseInt(this.id.split('-')[0]);
+        let y = parseInt(this.id.split('-')[1]);
+        let available = [];
+        available.push((x+2)+'-'+(y+1));
+        available.push((x+2)+'-'+(y-1));
+        available.push((x-2)+'-'+(y+1));
+        available.push((x-2)+'-'+(y-1));
+        available.push((x+1)+'-'+(y+2));
+        available.push((x-1)+'-'+(y+2));
+        available.push((x+1)+'-'+(y-2));
+        available.push((x-1)+'-'+(y-2));
+        return available;
+    }
+}
+
+//Bishop class
+class Bishop {
+    constructor(color, id) {
+        this.color = color;
+        this.id = id;
+        this.hasMoved = false;
+    }
+    availableSquares() {
+        let x = parseInt(this.id.split('-')[0]);
+        let y = parseInt(this.id.split('-')[1]);
+        let available = [];
+        let i = x;
+        let j = y;
+        while(i>=0 && j>=0) {
+            available.push(i+'-'+j);
+            i--;
+            j--;
+        }
+        while(i>=0 && j<=7) {
+            available.push(i+'-'+j);
+            i--;
+            j++;
+        }
+        while(i<=7 && j>=0) {
+            available.push(i+'-'+j);
+            i++;
+            j--;
+        }
+        while(i<=7 && j<=7) {
+            available.push(i+'-'+j);
+            i++;
+            j++;
+        }
+        return available;
+    }
+}
+
+//Queen class
+class Queen {
+    constructor(color, id) {
+        this.color = color;
+        this.id = id;
+        this.hasMoved = false;
+    }
+    availableSquares() {
+        let x = parseInt(this.id.split('-')[0]);
+        let y = parseInt(this.id.split('-')[1]);
+        let available = [];
+        for (let i = x;i>=0;i--) {
+            available.push(i+'-'+y);
+        }
+        for (let i = x;i<=7;i++) {
+            available.push(i+'-'+y);
+        }
+        for (let i = y;i>=0;i++) {
+            available.push(x+'-'+i);
+        }
+        for (let i = y;i<=7;i++) {
+            available.push(x+'-'+i);
+        }
+        let i = x;
+        let j = y;
+        while(i>=0 && j>=0) {
+            available.push(i+'-'+j);
+            i--;
+            j--;
+        }
+        while(i>=0 && j<=7) {
+            available.push(i+'-'+j);
+            i--;
+            j++;
+        }
+        while(i<=7 && j>=0) {
+            available.push(i+'-'+j);
+            i++;
+            j--;
+        }
+        while(i<=7 && j<=7) {
+            available.push(i+'-'+j);
+            i++;
+            j++;
+        }
+        return available;
+    }
+}
+
+//King class
+class King {
+    constructor(color, id) {
+        this.color = color;
+        this.id = id;
+    }
+    availableSquares() {
+        let x = parseInt(this.id.split('-')[0]);
+        let y = parseInt(this.id.split('-')[1]);
+        let available = [];
+        available.push((x+1)+'-'+y);
+        available.push((x-1)+'-'+y);
+        available.push(x+'-'+(y+1));
+        available.push(x+'-'+(y-1));
+        available.push((x+1)+'-'+(y+1));
+        available.push((x+1)+'-'+(y-1));
+        available.push((x-1)+'-'+(y+1));
+        available.push((x-1)+'-'+(y-1));
+        return available;
+    }
+}
