@@ -99,6 +99,7 @@ class Game {
         this.pieces = ["&#9817;", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
         this.code = ['P', 'R', 'N', 'B', 'Q', 'K', 'p', 'r', 'n', 'b', 'q', 'k'];
     }
+
     loadGameFromFEN(FEN) {
         let i = 0;
         for(let char of FEN) {
@@ -163,6 +164,7 @@ let sample = new Game();
 sample.loadGameFromFEN(FEN);
 sample.drawGame();
 console.log(sample.saveGameToFEN());
+
 //Rook class
 class Rook {
     constructor(color, id) {
