@@ -2,11 +2,19 @@ html, body {
     margin: 0;
     padding: 0;
     --main-font: 'Courier New', Courier, monospace;
+    --off-white: #c9e4ca;
+    --light: #87bba2;
+    --base: #55828b;
+    --bold: #3b6064;
+    --text-color: #364958;
+    background-color: aliceblue;
+
 }
 
 * {
     box-sizing: border-box;
 }
+
 
 /* Main section */
 
@@ -26,7 +34,7 @@ html, body {
     border-radius: 2vh;
     float: left;
     width: 25%;
-    border: 1px solid black;
+    border: 1px solid var(--text-color);
     height:80vh;
     margin:5vh;
 }
@@ -58,7 +66,7 @@ html, body {
     display: flex;
     width: 20%;
     height: 100vh;
-    border: 1px solid black;
+    border-left: .25em solid var(--text-color);
     padding: 10px;
     box-sizing: border-box;
     /* content: ""; */
@@ -69,7 +77,7 @@ html, body {
 .info-window {
     margin: auto;
     margin-top: 1em;
-    border: 1px solid black;
+    border: 1px solid var(--text-color);
     /* padding: ; */
     width: 90%;
     height:40%;
@@ -77,18 +85,23 @@ html, body {
 .info-window h1, h2{
     text-align: center;
     font-family: var(--main-font);
+    color: var(--bold);
 }
 
 /* Save controls */
 .save-controls {    
     /* Need to finish button layout */
     list-style-type: none;
+
 }
 .save-controls button {
     padding: .75em;
     width: 22em;
     border-radius: 1vh;
     font-family: var(--main-font);
+    border: 1px solid var(--text-color);
+    background-color: var(--bold);
+    color: aliceblue;
 }
 
 
@@ -107,9 +120,9 @@ html, body {
 }
 
 .white {
-    background-color: beige;
+    background-color: var(--off-white);
 }
 
 .black {
-    background-color: #55828b;
+    background-color: var(--base);
 }
