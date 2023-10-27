@@ -4,10 +4,10 @@ const board = document.querySelector(".chess-board");
 for(let i = 0;i<8;i++) {
     for(let j=0;j<8;j++) {
         if((i+j)%2!=0){
-            board.innerHTML += `<div class="square black" id="${i}-${j}"></div>`
+            board.innerHTML += `<div class="square black" id="${j+(i*8)}"></div>`
         }
         else {
-            board.innerHTML += `<div class="square white" id="${i}-${j}"></div>`
+            board.innerHTML += `<div class="square white" id="${j+(i*8)}"></div>`
         }
     }
 }
@@ -78,7 +78,88 @@ class Pawn {
             }
         }
     }
+    move(newId) {
+        if(!this.availableSquares().includes(newId)) {
+            return;
+        }
+        document.getElementById(this.id).innerHTML = "";
+        this.id = newId;
+        if(this.color === "black") {
+            document.getElementById(this.id).innerHTML = "<p>&#9823;</p>";
+        }
+        else {
+            document.getElementById(this.id).innerHTML = "<p>&#9817;</p>";
+        }
+    }
 }
 
-const something = new Pawn("black", "1-3");
-console.log(something.availableSquares())
+class Game {
+    constructor() {
+        this.board = [];
+        this.pieces = ["&#9817;", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
+        this.code = ['P', 'R', 'N', 'B', 'Q', 'K', 'p', 'r', 'n', 'b', 'q', 'k'];
+    }
+    loadGameFromFEN(FEN) {
+        let i = 0;
+        for(let char of FEN) {
+            if(char === '/') {
+                continue;
+            }
+            if(/\d/.test(char)) {
+                for(let j = 0;j<parseInt(char);j++) {
+                    this.board[i++] = 12;
+                }
+                continue;
+            }
+            this.board[i++] = this.code.indexOf(char);
+        }
+    }
+
+    saveGameToFEN() {
+        let FEN = "";
+        let files = 0;
+        let empty = 0;
+        for(let square of this.board) {
+            if(files === 8) {
+                if(empty>0) {
+                    FEN+=empty;
+                    empty = 0;
+                }
+                FEN+='/';
+                files = 0;
+            }
+            if(square === 12) { 
+                empty++;
+                files++;
+            }
+            else {
+                if(empty>0) {
+                    FEN+=empty;
+                    empty = 0;
+                }
+                FEN+=this.code[square];
+                files++;
+                console.log(files);
+            }
+        }
+        return FEN;
+    }
+
+    drawGame() {
+        let squares = document.querySelectorAll('.square');
+        for(let i = 0;i<64;i++) {
+            if(this.pieces[this.board[i]]) {
+                squares[i].piece = this.board[i];
+                let par = document.createElement('p');
+                par.innerHTML = this.pieces[this.board[i]];
+                squares[i].appendChild(par);
+            }
+        }
+    }
+}
+
+let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+let sample = new Game();
+sample.loadGameFromFEN(FEN);
+sample.drawGame();
+console.log(sample.saveGameToFEN());
