@@ -96,7 +96,7 @@ class Pawn {
 class Game {
     constructor() {
         this.board = [];
-        this.pieces = ["&#9817;", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
+        this.pieces = ["&#9817", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
         this.code = ['P', 'R', 'N', 'B', 'Q', 'K', 'p', 'r', 'n', 'b', 'q', 'k'];
     }
 
@@ -153,8 +153,184 @@ class Game {
                 squares[i].piece = this.board[i];
                 let par = document.createElement('p');
                 par.innerHTML = this.pieces[this.board[i]];
-                squares[i].appendChild(par);
+                squares[i].replaceChildren(par);
+                squares[i].addEventListener("click", e => this.getMoves(e));
             }
+            else {
+                squares[i].replaceChildren();
+            }
+        }
+    }
+
+    getMoves(e) {
+        let id = parseInt(e.currentTarget.id);
+        let piece = this.board[id];
+        let moves = [];
+        if(piece === 1 || piece === 7 || piece === 4 || piece === 10) {
+            let curr = id + 8;
+            while(curr<64) {
+                moves.push(curr)
+                curr+=8;
+            }
+            curr = id - 8;
+            while(curr>=0) {
+                moves.push(curr)
+                curr-=8;
+            }
+            curr = id;
+            while((curr+1)%8!=0) {
+                curr+=1;
+                moves.push(curr)
+            }
+            curr = id;
+            while((curr)%8!=0) {
+                curr-=1;
+                moves.push(curr);
+            }
+        }
+        if(piece === 3 || piece === 9 || piece === 4 || piece === 10) {
+            console.log('bishop')
+            let curr = id + 7;
+            while(curr<64) {
+                if((curr+1)%8===0) {
+                    break;
+                }
+                moves.push(curr);
+                curr+=7;
+            }
+            curr = id - 7;
+            while(curr>=0) {
+                if(curr%8===0) {
+                    break;
+                }
+                moves.push(curr);
+                curr-=7;
+            }
+            curr = id + 9;
+            while(curr<64) {
+                if((curr+1)%8===0) {
+                    moves.push(curr);
+                    break;
+                }
+                moves.push(curr);
+                curr+=9;
+            }
+            curr = id - 9;
+            while(curr>=0) {
+                if(curr%8===0) {
+                    moves.push(curr);
+                    break;
+                }
+                moves.push(curr);
+                curr-=9;
+            }
+        }
+        if(piece === 2 || piece === 8) {
+            let curr = id + 10;
+            if(Math.floor(id/8) + 1 === Math.floor(curr/8) && curr<64) {
+                moves.push(curr);
+            }
+            curr = id + 6;
+            if(Math.floor(id/8) + 1 === Math.floor(curr/8) && curr<64) {
+                moves.push(curr);
+            }
+            curr = id + 17;
+            if(Math.floor(id/8) + 2 === Math.floor(curr/8) && curr<64) {
+                moves.push(curr);
+            }
+            curr = id + 15;
+            if(Math.floor(id/8) + 2 === Math.floor(curr/8)&& curr<64) {
+                moves.push(curr);
+            }
+            curr = id - 10;
+            if(Math.floor(id/8) -1 === Math.floor(curr/8) && curr>0) {
+                moves.push(curr);
+            }
+            curr = id - 6;
+            if(Math.floor(id/8) - 1 === Math.floor(curr/8) && curr>0) {
+                moves.push(curr);
+            }
+            curr = id - 17;
+            if(Math.floor(id/8) - 2 === Math.floor(curr/8) && curr>0) {
+                moves.push(curr);
+            }
+            curr = id - 15;
+            if(Math.floor(id/8) - 2 === Math.floor(curr/8) && curr>0) {
+                moves.push(curr);
+            }
+        }
+        if(piece === 0 || piece === 6) {
+            if(piece === 0 && id-8>=0) {
+                moves.push(id-8);
+                if(Math.floor(id/8) === 6) {
+                    moves.push(id-16);
+                }
+            }
+            if(piece === 6 && id+8<64) {
+                moves.push(id+8);
+                if(Math.floor(id/8) === 1) {
+                    moves.push(id+16);
+                }
+            }
+        }
+        if(piece === 5 || piece === 11) {
+            let curr = id + 8;
+            if(curr<64) {
+                moves.push(curr);
+            }
+            curr = id - 8;
+            if(curr>=0) {
+                moves.push(curr);
+            }
+            curr = id + 1;
+            if(Math.floor(id/8) === Math.floor(curr/8)) {
+                moves.push(curr);
+            }
+            curr = id - 1;
+            if(Math.floor(id/8) === Math.floor(curr/8)) {
+                moves.push(curr);
+            }
+            curr = id + 9;
+            if(Math.floor(id/8) + 1 === Math.floor(curr/8)) {
+                moves.push(curr);
+            }
+            curr = id + 7;
+            if(Math.floor(id/8) + 1 === Math.floor(curr/8)) {
+                moves.push(curr);
+            }
+            curr = id - 9;
+            if(Math.floor(id/8) - 1 === Math.floor(curr/8)) {
+                moves.push(curr);
+            }
+            curr = id - 7;
+            if(Math.floor(id/8) - 1 === Math.floor(curr/8)) {
+                moves.push(curr);
+            }
+        }
+        let squares = document.querySelectorAll('.square');
+        for(let i = 0;i<64;i++) {
+            squares[i].classList.remove('active');
+        }
+        for(let i = 0;i<64;i++) {
+            if(moves.includes(parseInt(squares[i].id))) {
+                squares[i].classList.add('active');
+                squares[i].addEventListener('click', (e) => this.movePiece(e, id));
+            }
+        }
+    }
+
+    movePiece(e, id) {
+        let newID = e.target.id;
+        let oldID = id;
+        let piece = this.board[oldID];
+        if(piece != 12) {
+            console.log(piece);
+            this.board[oldID] = 12;
+            this.board[newID] = piece;
+            for(let i = 0;i<64;i++) {
+                squares[i].classList.remove('active');
+            }
+            this.drawGame();
         }
     }
 }

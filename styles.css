@@ -126,3 +126,7 @@ html, body {
 .black {
     background-color: var(--base);
 }
+
+.square.active {
+    background-color: red;
+}
