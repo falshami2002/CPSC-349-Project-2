@@ -142,12 +142,16 @@ body {
     height: 41%;
     box-shadow: var(--basic-shadow);
 }
+.info-window h2:hover{
+    color: var(--light);
+}
 
 h1,
 h2 {
     text-align: center;
     font-family: var(--main-font);
     color: var(--bold);
+    transition: .4s;
 }
 
 /* Save controls */
