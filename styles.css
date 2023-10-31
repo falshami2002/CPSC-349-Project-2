@@ -9,6 +9,14 @@ body {
     --bold: #3b6064;
     --text-color: #364958;
     --rounded-border: 2vh;
+
+    /* 
+    note:
+    
+    Apparantly you can get a more realistic
+    shadow by layering a bunch on top of
+    each other getting a "blended" effect.
+    */
     --basic-shadow:
         2px 4px 4px hsl(0deg 0% 0% / 0.333),
         3px 6px 6px hsl(0deg 0% 0% / 0.333),
