@@ -105,8 +105,7 @@ class Game {
                 // console.log(files);
             }
         }
-        // Here is where you need  to save the game to active save.
-        return FEN;
+        return FEN; // Returns FEN so that save function can locally save it in storage.
     }
 
     drawGame() {
@@ -449,14 +448,66 @@ class Game {
     }
 }
 
-let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-let sample = new Game();
-sample.loadGameFromFEN(FEN);
-sample.drawGame();
-console.log(sample.saveGameToFEN());
+let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"; // default chess layout
+//Create four games here that can be managed via three commands (new game, save game, load game)
+let FENS = [];
+try {
+    FENS = localStorage.FENS.split(",");
+} catch (SyntaxError) {
+    console.log("Empty localStorage - Using default value")
+    FENS = ["", "", "", ""];
+}
 
-// Need to add a way to prevent intersection of pieces. Add another variable to ensure that removal of
-// impossible moves.
+let game = new Game();
+let selectedGame = 0;
+console.log(selectedGame);
+
+const saves = document.querySelectorAll(".save");
+
+function changeActive() {
+    saves.forEach((save) => {
+        save.classList.remove("activeSave");
+    });
+    let selected = document.getElementById("s" + selectedGame);
+    selected.classList.add("activeSave");
+}
+
+saves.forEach((save) => {
+    save.addEventListener("click", (event) => {
+        selectedGame = event.currentTarget.id.split("")[1];
+
+        // Remove style from other saves
+        saves.forEach((save) => {
+            save.classList.remove("selectSave");
+        });
+
+        save.classList.add("selectSave");
+
+    })
+});
+
+function newGame() {
+    delete game;
+    game = new Game();
+    game.loadGameFromFEN(FEN);
+    game.drawGame();
+}
+
+function saveGame() {
+    FENS[selectedGame] = game.saveGameToFEN();
+    localStorage.clear();
+    localStorage.FENS = FENS;
+    changeActive();
+}
+
+function loadGame() {
+    delete game;
+    game = new Game();
+    game.loadGameFromFEN(FENS[selectedGame]);
+    game.drawGame();
+    changeActive();
+}
+
 //Pawn class
 class Pawn {
     constructor(color, id) {

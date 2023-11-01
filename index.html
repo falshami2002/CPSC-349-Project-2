@@ -51,19 +51,19 @@
             <div class="info-window">
                 <h1>Game Saves</h1>
                 <hr>
-                <h2>Save 1</h2>
+                <h2 class="save" id="s0">Save 1</h2>
                 <hr>
-                <h2>Save 2</h2>
+                <h2 class="save" id="s1">Save 2</h2>
                 <hr>
-                <h2>Save 3</h2>
+                <h2 class="save" id="s2">Save 3</h2>
                 <hr>
-                <h2>Save 4</h2>
+                <h2 class="save" id="s3">Save 4</h2>
 
             </div>
             <ul class="save-controls">
-                <li><button onClick="createGame()">New Game</button></li>
-                <li><button onClick="saveGameToFEN()">Save Game</button></li>
-                <li><button onclick="loadGameFromFEN()">Load Game</button></li>
+                <li><button onclick="newGame()">New Game</button></li>
+                <li><button onclick="saveGame()">Save Game</button></li>
+                <li><button onclick="loadGame()">Load Game</button></li>
             </ul>
 
         </div>
