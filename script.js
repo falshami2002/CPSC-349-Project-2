@@ -12,11 +12,11 @@ for(let i = 0;i<8;i++) {
     }
 }
 
+/* ?? Uneccesary Code ?? (OLD METHOD)
 //Add pieces at starting positions
-const squares = board.querySelectorAll(".square");
 for(let square of squares) {
     if(/0-[07]/g.test(square.id)) {
-        square.innerHTML = `<p>&#9820;</p>`
+        square.innerHTML = `<p>3</p>`
     }
     else if(/0-[16]/g.test(square.id)) {
         square.innerHTML = `<p>&#9822;</p>`
@@ -52,46 +52,8 @@ for(let square of squares) {
         square.innerHTML = `<p>&#9817;</p>`
     }
 }
+*/
 
-//Pawn class
-class Pawn {
-    constructor(color, id) {
-        this.color = color;
-        this.id = id;
-        this.hasMoved = false;
-    }
-    availableSquares() {
-        if (this.hasMoved) {
-            if(this.color === "black") {
-                return [(parseInt(this.id.split('-')[0])+1).toString() + '-' + this.id.split('-')[1]];
-            }
-            else if(this.color === "white") {
-                return [(parseInt(this.id.split('-')[0])-1).toString() + '-' + this.id.split('-')[1]];
-            }
-        }
-        if (!this.hasMoved) {
-            if(this.color === "black") {
-                return [(parseInt(this.id.split('-')[0])+1).toString() + '-' + this.id.split('-')[1], (parseInt(this.id.split('-')[0])+2).toString() + '-' + this.id.split('-')[1]];
-            }
-            else if(this.color === "white") {
-                return [(parseInt(this.id.split('-')[0])-1).toString() + '-' + this.id.split('-')[1], (parseInt(this.id.split('-')[0])-2).toString() + '-' + this.id.split('-')[1]];
-            }
-        }
-    }
-    move(newId) {
-        if(!this.availableSquares().includes(newId)) {
-            return;
-        }
-        document.getElementById(this.id).innerHTML = "";
-        this.id = newId;
-        if(this.color === "black") {
-            document.getElementById(this.id).innerHTML = "<p>&#9823;</p>";
-        }
-        else {
-            document.getElementById(this.id).innerHTML = "<p>&#9817;</p>";
-        }
-    }
-}
 
 class Game {
     constructor() {
@@ -129,7 +91,7 @@ class Game {
                 FEN+='/';
                 files = 0;
             }
-            if(square === 12) { 
+            if(square === 12) {
                 empty++;
                 files++;
             }
@@ -154,7 +116,10 @@ class Game {
                 let par = document.createElement('p');
                 par.innerHTML = this.pieces[this.board[i]];
                 squares[i].replaceChildren(par);
-                squares[i].addEventListener("click", e => this.getMoves(e));
+                squares[i].addEventListener("click", e => {
+                    this.getMoves(e);
+                    console.log("click");
+                });
             }
             else {
                 squares[i].replaceChildren();
@@ -320,6 +285,7 @@ class Game {
     }
 
     movePiece(e, id) {
+        let squares = document.querySelectorAll('.square');
         let newID = e.target.id;
         let oldID = id;
         let piece = this.board[oldID];
@@ -340,6 +306,48 @@ let sample = new Game();
 sample.loadGameFromFEN(FEN);
 sample.drawGame();
 console.log(sample.saveGameToFEN());
+
+// Need to add a way to prevent intersection of pieces. Add another variable to ensure that removal of
+// impossible moves.
+//Pawn class
+class Pawn {
+    constructor(color, id) {
+        this.color = color;
+        this.id = id;
+        this.hasMoved = false;
+    }
+    availableSquares() {
+        if (this.hasMoved) {
+            if (this.color === "black") {
+                return [(parseInt(this.id.split('-')[0]) + 1).toString() + '-' + this.id.split('-')[1]];
+            }
+            else if (this.color === "white") {
+                return [(parseInt(this.id.split('-')[0]) - 1).toString() + '-' + this.id.split('-')[1]];
+            }
+        }
+        if (!this.hasMoved) {
+            if (this.color === "black") {
+                return [(parseInt(this.id.split('-')[0]) + 1).toString() + '-' + this.id.split('-')[1], (parseInt(this.id.split('-')[0]) + 2).toString() + '-' + this.id.split('-')[1]];
+            }
+            else if (this.color === "white") {
+                return [(parseInt(this.id.split('-')[0]) - 1).toString() + '-' + this.id.split('-')[1], (parseInt(this.id.split('-')[0]) - 2).toString() + '-' + this.id.split('-')[1]];
+            }
+        }
+    }
+    move(newId) {
+        if (!this.availableSquares().includes(newId)) {
+            return;
+        }
+        document.getElementById(this.id).innerHTML = "";
+        this.id = newId;
+        if (this.color === "black") {
+            document.getElementById(this.id).innerHTML = "<p>&#9823;</p>";
+        }
+        else {
+            document.getElementById(this.id).innerHTML = "<p>&#9817;</p>";
+        }
+    }
+}
 
 //Rook class
 class Rook {
