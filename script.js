@@ -454,14 +454,20 @@ let FENS = [];
 try {
     FENS = localStorage.FENS.split(",");
 } catch (SyntaxError) {
-    console.log("Empty localStorage - Using default value")
+    console.log("No FENS - Using default value")
     FENS = ["", "", "", ""];
+}
+
+let dates = [];
+try {
+    dates = localStorage.dates.split(",");
+} catch (SyntaxError) {
+    console.log("No DATES - Using default value")
+    dates = ["", "", "", ""];
 }
 
 let game = new Game();
 let selectedGame = 0;
-console.log(selectedGame);
-
 const saves = document.querySelectorAll(".save");
 
 function changeActive() {
@@ -471,8 +477,15 @@ function changeActive() {
     let selected = document.getElementById("s" + selectedGame);
     selected.classList.add("activeSave");
 }
+changeActive(); // Call it once to establish save 1 as default save.
+
+function updateTime() {
+    let selected = document.getElementById("s" + selectedGame);
+    selected.innerHTML = "Save " + (selectedGame + 1) + " - " + dates[selectedGame];
+}
 
 saves.forEach((save) => {
+
     save.addEventListener("click", (event) => {
         selectedGame = event.currentTarget.id.split("")[1];
 
@@ -484,6 +497,8 @@ saves.forEach((save) => {
         save.classList.add("selectSave");
 
     })
+    let number = save.id.split("")[1];
+    save.innerHTML = "Save " + (Number(number) + 1) + " - " + dates[number];
 });
 
 function newGame() {
@@ -494,9 +509,15 @@ function newGame() {
 }
 
 function saveGame() {
+    let date = new Date();
+    let day = (date.getMonth() + 1) + "/" + (date.getDay() - 2);
+    let time = ((date.getHours() - 1) % 12) + 1 + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + (date.getHours() > 12 ? "PM" : "AM");
     FENS[selectedGame] = game.saveGameToFEN();
+    dates[selectedGame] = (day + " " + time);
     localStorage.clear();
     localStorage.FENS = FENS;
+    localStorage.dates = dates;
+    updateTime();
     changeActive();
 }
 

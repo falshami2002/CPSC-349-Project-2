@@ -237,10 +237,14 @@ h2 {
 
 .selectSave {
     /* Update for better look */
-    background-color: green;
+    background-color: #cccccc;
+    margin: 0px;
+    padding: 10px;
 }
 
 .activeSave {
     /* Update for better look */
-    background-color: red;
+    background-color: lightgreen;
+    margin: 0px;
+    padding: 10px;
 }
