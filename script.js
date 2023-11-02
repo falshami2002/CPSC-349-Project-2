@@ -446,7 +446,7 @@ class Game {
             this.drawGame();
         }
     }
-    
+
     drawCaptured(pieceID) {
         const blackCap = document.querySelectorAll('.captured-area')[0];
         const whiteCap = document.querySelectorAll('.captured-area')[1];
