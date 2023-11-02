@@ -98,6 +98,7 @@ class Game {
         this.board = [];
         this.pieces = ["&#9817", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
         this.code = ['P', 'R', 'N', 'B', 'Q', 'K', 'p', 'r', 'n', 'b', 'q', 'k'];
+        this.captured = [[], []];
     }
 
     loadGameFromFEN(FEN) {
@@ -207,38 +208,38 @@ class Game {
             }
             curr = id;
             while((curr+1)%8!=0) {
-                if((piece === 1 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
+                if((piece === 1 || piece === 4) && (this.board[curr+1] >= 0 && this.board[curr+1] <= 5)) {
                     break;
                 } 
-                if((piece === 7 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if((piece === 7 || piece === 10) && (this.board[curr+1] >= 5 && this.board[curr+1] <= 11)) {
                     break;
                 } 
                 curr+=1;
                 moves.push(curr)
-                if((piece === 1 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if((piece === 1 || piece === 4) && (this.board[curr+1] >= 5 && this.board[curr+1] <= 11)) {
                     moves.push(curr);
                     break;
                 }
-                if((piece === 7 || piece === 10) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
+                if((piece === 7 || piece === 10) && (this.board[curr+1] >= 0 && this.board[curr+1] <= 5)) {
                     moves.push(curr);
                     break;
                 }
             }
             curr = id;
             while((curr)%8!=0) {
-                if((piece === 1 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
+                if((piece === 1 || piece === 4) && (this.board[curr-1] >= 0 && this.board[curr-1] <= 5)) {
                     break;
                 } 
-                if((piece === 7 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if((piece === 7 || piece === 10) && (this.board[curr-1] >= 5 && this.board[curr-1] <= 11)) {
                     break;
                 } 
                 curr-=1;
                 moves.push(curr);
-                if((piece === 1 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if((piece === 1 || piece === 4) && (this.board[curr-1] >= 5 && this.board[curr-1] <= 11)) {
                     moves.push(curr);
                     break;
                 }
-                if((piece === 7 || piece === 10) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
+                if((piece === 7 || piece === 10) && (this.board[curr-1] >= 0 && this.board[curr-1] <= 5)) {
                     moves.push(curr);
                     break;
                 }
@@ -467,17 +468,34 @@ class Game {
     }
 
     movePiece(e, id) {
-        let newID = e.target.id;
+        let newID = e.currentTarget.id;
         let oldID = id;
         let piece = this.board[oldID];
         if(piece != 12) {
-            console.log(piece);
+            if(this.board[newID] != 12) {
+                this.drawCaptured(newID);
+            }
             this.board[oldID] = 12;
             this.board[newID] = piece;
             for(let i = 0;i<64;i++) {
                 squares[i].classList.remove('active');
             }
             this.drawGame();
+        }
+    }
+
+    drawCaptured(pieceID) {
+        const blackCap = document.querySelectorAll('.captured-area')[0];
+        const whiteCap = document.querySelectorAll('.captured-area')[1];
+
+        let par = document.createElement('p');
+        par.innerHTML+=this.pieces[this.board[pieceID]];
+
+        if(this.board[pieceID] >= 0 && this.board[pieceID] <= 5) {
+            blackCap.appendChild(par);
+        }
+        else if(this.board[pieceID] >= 6 && this.board[pieceID] <= 11) {
+            whiteCap.appendChild(par);
         }
     }
 }

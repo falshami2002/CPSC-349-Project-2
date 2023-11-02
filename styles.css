@@ -231,3 +231,21 @@ h2 {
     /* background-color: var(--bold); */
     border: 5px solid rgb(198, 0, 0);
 }
+
+.captured-section {
+    height: 45%;
+    width: 100%;
+}
+
+.captured-area {
+    height: 95%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.captured-area p {
+    text-align: center;
+    font-size: 20px;
+}
