@@ -42,7 +42,6 @@ body {
     display: flex;
     width: 80%;
     padding: 10px;
-    justify-content: space-around;
     align-items: center;
     height: 100vh;
     /* width: 100vw; */
@@ -52,6 +51,7 @@ body {
 .info-left {
     float: left;
     width: 25%;
+    margin: 20px;
     /* border: 1px solid var(--text-color); */
     height: 80vh;
 
@@ -268,4 +268,33 @@ h2 {
     background-color: lightgreen;
     margin: 0px;
     padding: 10px;
+}
+
+/* For row and column labels to show the location of pieces on the board */
+.row {
+    list-style: none;
+}
+
+.row li {
+    padding: 38px;
+    font-size: x-large;
+}
+
+.row li:first-child {
+    padding-top: 40px;
+}
+
+.column {
+    list-style: none;
+    margin-left: 0px;
+}
+
+.column li {
+    display: inline;
+    padding: 44px;
+    font-size: x-large;
+}
+
+.column li:first-child {
+    padding-left: 10px;
 }

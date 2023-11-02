@@ -64,6 +64,7 @@ class Game {
     }
 
     loadGameFromFEN(FEN) {
+        // Given a FEN it will be able to place the chess pieces throughout the board. Can produce starting chess layout or saved game layouts.
         let i = 0;
         for (let char of FEN) {
             if (char === '/') {
@@ -80,6 +81,7 @@ class Game {
     }
 
     saveGameToFEN() {
+        // Will save the chess pieces on the board into FEN format to save the progress of the game
         let FEN = "";
         let files = 0;
         let empty = 0;
@@ -110,6 +112,7 @@ class Game {
     }
 
     drawGame() {
+        // Draws the board's chess pieces on top of the board. As well as adding listeners to each chess piece if the user wants to move the tile.
         let squares = document.querySelectorAll('.square');
         for (let i = 0; i < 64; i++) {
             if (this.pieces[this.board[i]]) {
