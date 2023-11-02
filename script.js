@@ -105,7 +105,6 @@ class Game {
                 }
                 FEN += this.code[square];
                 files++;
-                console.log(files);
             }
         }
         return FEN;
@@ -132,6 +131,7 @@ class Game {
         let id = parseInt(e.currentTarget.id);
         let piece = this.board[id];
         let moves = [];
+        // Rook (1, 7) and Queen (4, 10) straight vertical and horizontal movement
         if (piece === 1 || piece === 7 || piece === 4 || piece === 10) {
             let curr = id + 8;
             while (curr < 64) {
@@ -210,6 +210,7 @@ class Game {
                 }
             }
         }
+        // Bishop (3, 9) and Queen (4, 10) Diagnoal Movement
         if (piece === 3 || piece === 9 || piece === 4 || piece === 10) {
             let curr = id + 7;
             while (curr < 64) {
@@ -302,6 +303,7 @@ class Game {
                 }
             }
         }
+        // Knight (2, 8) Movement
         if (piece === 2 || piece === 8) {
             let curr = id + 10;
             if (Math.floor(id / 8) + 1 === Math.floor(curr / 8) && curr < 64) {
@@ -352,6 +354,7 @@ class Game {
                 }
             }
         }
+        // Pawn (0, 6) Movement
         if (piece === 0 || piece === 6) {
             if (piece === 0 && id - 8 >= 0) {
                 if (this.board[id - 8] === 12) {
@@ -370,6 +373,7 @@ class Game {
                 }
             }
         }
+        // King (5, 11) Movement
         if (piece === 5 || piece === 11) {
             let curr = id + 8;
             if (curr < 64) {
@@ -420,10 +424,12 @@ class Game {
                 }
             }
         }
+        // Resets active squares
         let squares = document.querySelectorAll('.square');
         for (let i = 0; i < 64; i++) {
             squares[i].classList.remove('active');
         }
+        // Based on moves found for the selected piece will show active squares that the player move to
         for (let i = 0; i < 64; i++) {
             if (moves.includes(parseInt(squares[i].id))) {
                 squares[i].classList.add('active');
@@ -431,7 +437,8 @@ class Game {
             }
         }
     }
-
+    
+    // Moves piece into possible active square. Also checks if location has an existing piece or is empty with respected response
     movePiece(e, id) {
         let squares = document.querySelectorAll('.square');
         let newID = e.currentTarget.id;
@@ -439,7 +446,8 @@ class Game {
         let piece = this.board[oldID];
         if (piece != 12) {
             if (this.board[newID] != 12) {
-                this.drawCaptured(newID);
+                this.drawCaptured(this.board[newID]);
+                updateCapture(newID);
             }
             this.board[oldID] = 12;
             this.board[newID] = piece;
@@ -450,17 +458,18 @@ class Game {
         }
     }
 
-    drawCaptured(pieceID) {
+    // Updates board on pieces that are captured
+    drawCaptured(pieceCode) {
         const blackCap = document.querySelectorAll('.captured-area')[0];
         const whiteCap = document.querySelectorAll('.captured-area')[1];
 
         let par = document.createElement('p');
-        par.innerHTML += this.pieces[this.board[pieceID]];
+        par.innerHTML += this.pieces[pieceCode];
 
-        if (this.board[pieceID] >= 0 && this.board[pieceID] <= 5) {
+        if (pieceCode >= 0 && pieceCode <= 5) {
             blackCap.appendChild(par);
         }
-        else if (this.board[pieceID] >= 6 && this.board[pieceID] <= 11) {
+        else if (pieceCode >= 6 && pieceCode <= 11) {
             whiteCap.appendChild(par);
         }
     }
@@ -491,11 +500,35 @@ try {
     dates = ["", "", "", ""];
 }
 
+let captured = [];
+try {
+    captured = localStorage.captured.split(",");
+} catch (SyntaxError) {
+    console.log("No captured - Using default value")
+    captured = ["", "", "", ""];
+}
+
 // Initiate the main game where all saves/new games will be loaded onto
 let game = new Game();
 let selectedGame = 0; // default save slot
 const saves = document.querySelectorAll(".save");
+let tempCapture = "";
 
+function updateCapture(ID) {
+    tempCapture += game.code[game.board[ID]];
+}
+
+function resetCapture(tempCapture) {
+    let capArea = document.querySelectorAll(".captured-area");
+    capArea.forEach((cap) => {
+        cap.innerHTML = "";
+    });
+    if(!tempCapture == ""){
+        for(char of tempCapture) {
+            game.drawCaptured(game.code.indexOf(char));
+        }
+    }
+}
 
 function changeActive() {
     // Actively change the actively used save slot when we either load or save a game.
@@ -510,7 +543,7 @@ changeActive(); // Call it once to establish save 1 as default save.
 function updateTime() {
     // Update time for selected save slot based on list(dates)
     let selected = document.getElementById("s" + selectedGame);
-    selected.innerHTML = "Save " + (Number(selectedGame) + 1) + " - " + dates[selectedGame];
+    selected.innerHTML = "Save " + (Number(selectedGame) + 1) + dates[selectedGame];
 }
 
 // Add eventlistener when a save slot is selected updating target save
@@ -528,7 +561,7 @@ saves.forEach((save) => {
     })
     // Important when website reloads to provide info of previous sessions.
     let number = save.id.split("")[1];
-    save.innerHTML = "Save " + (Number(number) + 1) + " - " + dates[number];
+    save.innerHTML = "Save " + (Number(number) + 1) + dates[number];
 });
 
 function newGame() {
@@ -537,6 +570,8 @@ function newGame() {
     game = new Game();
     game.loadGameFromFEN(FEN);
     game.drawGame();
+    tempCapture = "";
+    resetCapture(tempCapture);
 }
 
 function saveGame() {
@@ -544,13 +579,19 @@ function saveGame() {
     let date = new Date();
     let day = (date.getMonth() + 1) + "/" + (date.getDay() - 2);
     let time = ((date.getHours() - 1) % 12) + 1 + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + (date.getHours() > 12 ? "PM" : "AM");
+    
     FENS[selectedGame] = game.saveGameToFEN();
-    dates[selectedGame] = (day + " " + time);
+    dates[selectedGame] = " - " + (day + " " + time);
+    captured[selectedGame] = tempCapture;
+
     localStorage.clear();
     localStorage.FENS = FENS; //FEN is saved in the list of FENS for future sessions
     localStorage.dates = dates; //date is saved in the list of dates for future sessions
+    localStorage.captured = captured;
+
     updateTime(); // Update the save slot display to show accurate time of save point
     changeActive(); // Make selected save the active save for the game
+
 }
 
 function loadGame() {
@@ -558,202 +599,8 @@ function loadGame() {
     delete game;
     game = new Game();
     game.loadGameFromFEN(FENS[selectedGame]);
+    tempCapture = captured[selectedGame];
     game.drawGame();
     changeActive(); // Make selected save the active save for the game
-}
-// Chess Piece Classes //
-//Pawn class
-class Pawn {
-    constructor(color, id) {
-        this.color = color;
-        this.id = id;
-        this.hasMoved = false;
-    }
-    availableSquares() {
-        if (this.hasMoved) {
-            if (this.color === "black") {
-                return [(parseInt(this.id.split('-')[0]) + 1).toString() + '-' + this.id.split('-')[1]];
-            }
-            else if (this.color === "white") {
-                return [(parseInt(this.id.split('-')[0]) - 1).toString() + '-' + this.id.split('-')[1]];
-            }
-        }
-        if (!this.hasMoved) {
-            if (this.color === "black") {
-                return [(parseInt(this.id.split('-')[0]) + 1).toString() + '-' + this.id.split('-')[1], (parseInt(this.id.split('-')[0]) + 2).toString() + '-' + this.id.split('-')[1]];
-            }
-            else if (this.color === "white") {
-                return [(parseInt(this.id.split('-')[0]) - 1).toString() + '-' + this.id.split('-')[1], (parseInt(this.id.split('-')[0]) - 2).toString() + '-' + this.id.split('-')[1]];
-            }
-        }
-    }
-    move(newId) {
-        if (!this.availableSquares().includes(newId)) {
-            return;
-        }
-        document.getElementById(this.id).innerHTML = "";
-        this.id = newId;
-        if (this.color === "black") {
-            document.getElementById(this.id).innerHTML = "<p>&#9823;</p>";
-        }
-        else {
-            document.getElementById(this.id).innerHTML = "<p>&#9817;</p>";
-        }
-    }
-}
-
-//Rook class
-class Rook {
-    constructor(color, id) {
-        this.color = color;
-        this.id = id;
-    }
-    availableSquares() {
-        let x = parseInt(this.id.split('-')[0]);
-        let y = parseInt(this.id.split('-')[1]);
-        let available = [];
-        for (let i = x; i >= 0; i--) {
-            available.push(i + '-' + y);
-        }
-        for (let i = x; i <= 7; i++) {
-            available.push(i + '-' + y);
-        }
-        for (let i = y; i >= 0; i++) {
-            available.push(x + '-' + i);
-        }
-        for (let i = y; i <= 7; i++) {
-            available.push(x + '-' + i);
-        }
-        return available;
-    }
-}
-
-//Knight class
-class Knight {
-    constructor(color, id) {
-        this.color = color;
-        this.id = id;
-    }
-    availableSquares() {
-        let x = parseInt(this.id.split('-')[0]);
-        let y = parseInt(this.id.split('-')[1]);
-        let available = [];
-        available.push((x + 2) + '-' + (y + 1));
-        available.push((x + 2) + '-' + (y - 1));
-        available.push((x - 2) + '-' + (y + 1));
-        available.push((x - 2) + '-' + (y - 1));
-        available.push((x + 1) + '-' + (y + 2));
-        available.push((x - 1) + '-' + (y + 2));
-        available.push((x + 1) + '-' + (y - 2));
-        available.push((x - 1) + '-' + (y - 2));
-        return available;
-    }
-}
-
-//Bishop class
-class Bishop {
-    constructor(color, id) {
-        this.color = color;
-        this.id = id;
-        this.hasMoved = false;
-    }
-    availableSquares() {
-        let x = parseInt(this.id.split('-')[0]);
-        let y = parseInt(this.id.split('-')[1]);
-        let available = [];
-        let i = x;
-        let j = y;
-        while (i >= 0 && j >= 0) {
-            available.push(i + '-' + j);
-            i--;
-            j--;
-        }
-        while (i >= 0 && j <= 7) {
-            available.push(i + '-' + j);
-            i--;
-            j++;
-        }
-        while (i <= 7 && j >= 0) {
-            available.push(i + '-' + j);
-            i++;
-            j--;
-        }
-        while (i <= 7 && j <= 7) {
-            available.push(i + '-' + j);
-            i++;
-            j++;
-        }
-        return available;
-    }
-}
-
-//Queen class
-class Queen {
-    constructor(color, id) {
-        this.color = color;
-        this.id = id;
-        this.hasMoved = false;
-    }
-    availableSquares() {
-        let x = parseInt(this.id.split('-')[0]);
-        let y = parseInt(this.id.split('-')[1]);
-        let available = [];
-        for (let i = x; i >= 0; i--) {
-            available.push(i + '-' + y);
-        }
-        for (let i = x; i <= 7; i++) {
-            available.push(i + '-' + y);
-        }
-        for (let i = y; i >= 0; i++) {
-            available.push(x + '-' + i);
-        }
-        for (let i = y; i <= 7; i++) {
-            available.push(x + '-' + i);
-        }
-        let i = x;
-        let j = y;
-        while (i >= 0 && j >= 0) {
-            available.push(i + '-' + j);
-            i--;
-            j--;
-        }
-        while (i >= 0 && j <= 7) {
-            available.push(i + '-' + j);
-            i--;
-            j++;
-        }
-        while (i <= 7 && j >= 0) {
-            available.push(i + '-' + j);
-            i++;
-            j--;
-        }
-        while (i <= 7 && j <= 7) {
-            available.push(i + '-' + j);
-            i++;
-            j++;
-        }
-        return available;
-    }
-}
-
-//King class
-class King {
-    constructor(color, id) {
-        this.color = color;
-        this.id = id;
-    }
-    availableSquares() {
-        let x = parseInt(this.id.split('-')[0]);
-        let y = parseInt(this.id.split('-')[1]);
-        let available = [];
-        available.push((x + 1) + '-' + y);
-        available.push((x - 1) + '-' + y);
-        available.push(x + '-' + (y + 1));
-        available.push(x + '-' + (y - 1));
-        available.push((x + 1) + '-' + (y + 1));
-        available.push((x + 1) + '-' + (y - 1));
-        available.push((x - 1) + '-' + (y + 1));
-        available.push((x - 1) + '-' + (y - 1));
-        return available;
-    }
+    resetCapture(tempCapture);
 }
