@@ -61,7 +61,7 @@ class Game {
         this.pieces = ["&#9817", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
         this.code = ['P', 'R', 'N', 'B', 'Q', 'K', 'p', 'r', 'n', 'b', 'q', 'k'];
         this.turn = 'w';
-        this.id = 0;
+        this.currentID = 0;
     }
 
     loadGameFromFEN(FEN) {
@@ -140,7 +140,7 @@ class Game {
 
     getMoves(e) {
         let id = parseInt(e.currentTarget.id);
-        this.id = id;
+        this.currentID = id;
         let piece = this.board[id];
         let moves = [];
         // Rook (1, 7) and Queen (4, 10) straight vertical and horizontal movement
@@ -372,7 +372,7 @@ class Game {
                 if (this.board[id - 8] === 12) {
                     moves.push(id - 8);
                 }
-                if (Math.floor(id / 8) === 6 && this.board[id - 16] === 12) {
+                if (Math.floor(id / 8) === 6 && this.board[id - 8] === 12 && this.board[id - 16] === 12) {
                     moves.push(id - 16);
                 }
             }
@@ -380,7 +380,7 @@ class Game {
                 if (this.board[id + 8] === 12) {
                     moves.push(id + 8);
                 }
-                if (Math.floor(id / 8) === 1 && this.board[id + 16] === 12) {
+                if (Math.floor(id / 8) === 1 && this.board[id + 8] === 12 && this.board[id + 16] === 12) {
                     moves.push(id + 16);
                 }
             }
@@ -459,7 +459,7 @@ class Game {
     movePiece(e) {
         let squares = document.querySelectorAll('.square');
         let newID = e.currentTarget.id;
-        let oldID = game.id;
+        let oldID = game.currentID;
         console.log(oldID);
         let piece = this.board[oldID];
         if (piece != 12) {
