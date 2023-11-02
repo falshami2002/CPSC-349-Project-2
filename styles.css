@@ -10,10 +10,12 @@ body {
     --text-color: #364958;
     --rounded-border: 2vh;
 
-    /* 
+
+    /*
     note:
-    
-    Apparantly you can get a more realistic
+
+    Apparently you can get a more realistic
+
     shadow by layering a bunch on top of
     each other getting a "blended" effect.
     */
@@ -145,12 +147,14 @@ body {
     /* box-shadow: var(--basic-shadow); */
     transition: .4s;
 }
+
 .info-window:hover {
     width: 92%;
     height: 41%;
     box-shadow: var(--basic-shadow);
 }
-.info-window h2:hover{
+
+.info-window h2:hover {
     color: var(--light);
 }
 
@@ -190,7 +194,6 @@ h2 {
     color: aliceblue;
     margin-bottom: .25em;
     transition: .4s;
-    
 }
 
 .save-controls button:hover {
@@ -248,4 +251,21 @@ h2 {
 .captured-area p {
     text-align: center;
     font-size: 20px;
+}
+
+.selectSave {
+    /* Highlights save that the user clicks
+    while not assuming they are using the save
+    or loading from it*/
+    background-color: #cccccc;
+    margin: 0px;
+    padding: 10px;
+}
+
+.activeSave {
+    /* Highlights save that was actively saved/loaded
+    by the user interacting with buttons*/
+    background-color: lightgreen;
+    margin: 0px;
+    padding: 10px;
 }
