@@ -430,7 +430,7 @@ class Game {
     }
 
     movePiece(e, id) {
-        let squares = document.querySelectorAll('.square');l
+        let squares = document.querySelectorAll('.square');
         let newID = e.currentTarget.id;
         let oldID = id;
         let piece = this.board[oldID];
@@ -444,6 +444,21 @@ class Game {
                 squares[i].classList.remove('active');
             }
             this.drawGame();
+        }
+    }
+    
+    drawCaptured(pieceID) {
+        const blackCap = document.querySelectorAll('.captured-area')[0];
+        const whiteCap = document.querySelectorAll('.captured-area')[1];
+
+        let par = document.createElement('p');
+        par.innerHTML += this.pieces[this.board[pieceID]];
+
+        if (this.board[pieceID] >= 0 && this.board[pieceID] <= 5) {
+            blackCap.appendChild(par);
+        }
+        else if (this.board[pieceID] >= 6 && this.board[pieceID] <= 11) {
+            whiteCap.appendChild(par);
         }
     }
 }
