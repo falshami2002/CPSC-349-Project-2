@@ -68,6 +68,9 @@ class Game {
         // Given a FEN it will be able to place the chess pieces throughout the board. Can produce starting chess layout or saved game layouts.
         let i = 0;
         for (let char of FEN) {
+            if (char === ' ') {
+                break;
+            }
             if (char === '/') {
                 continue;
             }
@@ -79,6 +82,7 @@ class Game {
             }
             this.board[i++] = this.code.indexOf(char);
         }
+        this.turn = FEN[FEN.length - 1];
     }
 
     saveGameToFEN() {
@@ -108,6 +112,7 @@ class Game {
                 files++;
             }
         }
+        FEN += " " + this.turn;
         return FEN;
     }
 
@@ -499,7 +504,7 @@ class Game {
     }
 }
 
-let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"; // default chess layout
+let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"; // default chess layout
 
 /* Section for Save Functionality
     Games are loaded and saved into four slots while the current game exist as one single game board.
