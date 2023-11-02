@@ -60,7 +60,7 @@ class Game {
         this.board = [];
         this.pieces = ["&#9817", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
         this.code = ['P', 'R', 'N', 'B', 'Q', 'K', 'p', 'r', 'n', 'b', 'q', 'k'];
-        this.captured = [[], []];
+        this.turn = 'w';
     }
 
     loadGameFromFEN(FEN) {
@@ -113,18 +113,27 @@ class Game {
     drawGame() {
         // Draws the board's chess pieces on top of the board. As well as adding listeners to each chess piece if the user wants to move the tile.
         let squares = document.querySelectorAll('.square');
+        let turn = document.querySelector('#turn').replaceChildren(document.createTextNode(this.turn === 'w' ? "White to play" : "Black to play"));
         for (let i = 0; i < 64; i++) {
+            squares[i].removeEventListener("click", this.getMovesCallback);
             if (this.pieces[this.board[i]]) {
                 squares[i].piece = this.board[i];
                 let par = document.createElement('p');
                 par.innerHTML = this.pieces[this.board[i]];
                 squares[i].replaceChildren(par);
-                squares[i].addEventListener("click", e => this.getMoves(e));
+                if((this.turn === 'w' && (this.board[i] >= 0 && this.board[i] <= 5)) || (this.turn === 'b' && (this.board[i] >= 5 && this.board[i] <= 11)))
+                {
+                    squares[i].addEventListener("click", this.getMovesCallback);
+                }
             }
             else {
                 squares[i].replaceChildren();
             }
         }
+    }
+
+    getMovesCallback(e) {
+        game.getMoves(e);
     }
 
     getMoves(e) {
@@ -453,6 +462,12 @@ class Game {
             this.board[newID] = piece;
             for (let i = 0; i < 64; i++) {
                 squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
             }
             this.drawGame();
         }
