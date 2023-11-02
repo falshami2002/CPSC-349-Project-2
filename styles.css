@@ -96,6 +96,16 @@ body {
         width: 30rem;
         height: 30rem;
     }
+    .row {
+        height: 30rem;
+    }
+    .column {
+        width: 30rem;
+    }
+    .row, .column li {
+        font-size: 1.1em;
+    }
+    
 
     .about {
         height: 100%;
@@ -107,7 +117,7 @@ body {
         flex-wrap: wrap;
     }
     .about img {
-        /* width: 25%; */
+        width: 25%;
         border-radius: 25%;
         transition: .4s;
     }
@@ -123,6 +133,16 @@ body {
         width: 52rem;
         height: 52rem;
     }
+    .row {
+        height: 52rem;
+    }
+    .column {
+        width: 52rem;
+    }
+    .row, .column li {
+        font-size: 2em;
+    }
+    
 
     .about {
         height: 30%;
@@ -151,7 +171,9 @@ body {
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     border: 5px solid var(--text-color);
     box-shadow: var(--basic-shadow);
-
+}
+.chess-board p {
+    color: var(--text-color);
 }
 
 /* Info section */
@@ -304,31 +326,21 @@ h2 {
 }
 
 /* For row and column labels to show the location of pieces on the board */
+.row, .column {
+    list-style: none;
+    /* margin-left: 5%;  */
+    /* border: 1px solid black; */
+    display: flex;
+    justify-content: space-between;
+    padding-right: 1em;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--text-color);
+}
+
 .row {
-    list-style: none;
-    margin-left: 5%; /* Fix to dynamically change */
+    flex-direction: column;
+    /* text-align: center; */
+    margin-left: 3em;
+
 }
 
-.row li {
-    padding: 38px;
-    font-size: x-large;
-}
-
-.row li:first-child {
-    padding-top: 40px;
-}
-
-.column {
-    list-style: none;
-    margin-left: 0px;
-}
-
-.column li {
-    display: inline;
-    padding: 44px;
-    font-size: x-large;
-}
-
-.column li:first-child {
-    padding-left: 10px;
-}
