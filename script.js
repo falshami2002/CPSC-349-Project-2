@@ -380,6 +380,12 @@ class Game {
                 if (Math.floor(id / 8) === 6 && this.board[id - 8] === 12 && this.board[id - 16] === 12) {
                     moves.push(id - 16);
                 }
+                if (this.board[id - 7] >= 5 && this.board[id - 7] <= 11) {
+                    moves.push(id - 7);
+                }
+                if (this.board[id - 9] >= 5 && this.board[id - 9] <= 11) {
+                    moves.push(id - 9);
+                }
             }
             if (piece === 6 && id + 8 < 64) {
                 if (this.board[id + 8] === 12) {
@@ -387,6 +393,12 @@ class Game {
                 }
                 if (Math.floor(id / 8) === 1 && this.board[id + 8] === 12 && this.board[id + 16] === 12) {
                     moves.push(id + 16);
+                }
+                if (this.board[id + 7] >= 0 && this.board[id + 7] <= 5) {
+                    moves.push(id + 7);
+                }
+                if (this.board[id + 9] >= 0 && this.board[id + 9] <= 5) {
+                    moves.push(id + 9);
                 }
             }
         }
