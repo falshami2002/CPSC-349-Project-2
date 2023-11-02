@@ -10,6 +10,18 @@
             <div class="info-left">
                 <div class="captured-pieces">
                     <h1>captured pieces</h1>
+                    <div class="captured-section">
+                        <h2>Captured By Black</h2>
+                        <div class="captured-area">
+
+                        </div>
+                    </div>
+                    <div class="captured-section">
+                        <h2>Captured By White</h2>
+                        <div class="captured-area">
+
+                        </div>
+                    </div>
                 </div>
                 <div class="about">
                     <h2>about us</h2>
@@ -24,7 +36,7 @@
                         </li>
                         <li>
                             <img src="./discord.jpeg" alt="pfp">
-                            <p>test</p>
+                            <p>Louis</p>
                         </li>
                         <li>
                             <img src="./discord.jpeg" alt="pfp">
@@ -33,7 +45,30 @@
                     </ul>
                 </div>
             </div>
+            <ul class="row">
+                <li>8</li>
+                <li>7</li>
+                <li>6</li>
+                <li>5</li>
+                <li>4</li>
+                <li>3</li>
+                <li>2</li>
+                <li>1</li>
+            </ul>
+            <div>
+            <p>*Tell player who turn it is* centered</p>
             <div class="chess-board">
+            </div>
+            <ul class="column">
+                <li>a</li>
+                <li>b</li>
+                <li>c</li>
+                <li>d</li>
+                <li>e</li>
+                <li>f</li>
+                <li>g</li>
+                <li>h</li>
+            </ul>
             </div>
         </div>
         <div class="info-page">
@@ -51,21 +86,21 @@
             <div class="info-window">
                 <h1>Game Saves</h1>
                 <hr>
-                <h2>Save 1</h2>
+                <h2 class="save" id="s0">Save 1</h2>
                 <hr>
-                <h2>Save 2</h2>
+                <h2 class="save" id="s1">Save 2</h2>
                 <hr>
-                <h2>Save 3</h2>
+                <h2 class="save" id="s2">Save 3</h2>
                 <hr>
-                <h2>Save 4</h2>
-    
+                <h2 class="save" id="s3">Save 4</h2>
+
             </div>
             <ul class="save-controls">
-                <li><button>New Game</button></li>
-                <li><button>Save Game</button></li>
-                <li><button>Load Game</button></li>
+                <li><button onclick="newGame()">New Game</button></li>
+                <li><button onclick="saveGame()">Save Game</button></li>
+                <li><button onclick="loadGame()">Load Game</button></li>
             </ul>
-    
+
         </div>
         <script src="script.js"></script>
     </div>
