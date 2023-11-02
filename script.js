@@ -61,6 +61,7 @@ class Game {
         this.pieces = ["&#9817", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
         this.code = ['P', 'R', 'N', 'B', 'Q', 'K', 'p', 'r', 'n', 'b', 'q', 'k'];
         this.turn = 'w';
+        this.id = 0;
     }
 
     loadGameFromFEN(FEN) {
@@ -116,6 +117,7 @@ class Game {
         let turn = document.querySelector('#turn').replaceChildren(document.createTextNode(this.turn === 'w' ? "White to play" : "Black to play"));
         for (let i = 0; i < 64; i++) {
             squares[i].removeEventListener("click", this.getMovesCallback);
+            squares[i].removeEventListener("click", this.movePieceCallback);
             if (this.pieces[this.board[i]]) {
                 squares[i].piece = this.board[i];
                 let par = document.createElement('p');
@@ -138,6 +140,7 @@ class Game {
 
     getMoves(e) {
         let id = parseInt(e.currentTarget.id);
+        this.id = id;
         let piece = this.board[id];
         let moves = [];
         // Rook (1, 7) and Queen (4, 10) straight vertical and horizontal movement
@@ -437,21 +440,27 @@ class Game {
         let squares = document.querySelectorAll('.square');
         for (let i = 0; i < 64; i++) {
             squares[i].classList.remove('active');
+            squares[i].removeEventListener("click", this.movePieceCallback);
         }
         // Based on moves found for the selected piece will show active squares that the player move to
         for (let i = 0; i < 64; i++) {
             if (moves.includes(parseInt(squares[i].id))) {
                 squares[i].classList.add('active');
-                squares[i].addEventListener('click', (e) => this.movePiece(e, id));
+                squares[i].addEventListener('click', this.movePieceCallback);
             }
         }
     }
+
+    movePieceCallback(e) {
+        game.movePiece(e);
+    }
     
     // Moves piece into possible active square. Also checks if location has an existing piece or is empty with respected response
-    movePiece(e, id) {
+    movePiece(e) {
         let squares = document.querySelectorAll('.square');
         let newID = e.currentTarget.id;
-        let oldID = id;
+        let oldID = game.id;
+        console.log(oldID);
         let piece = this.board[oldID];
         if (piece != 12) {
             if (this.board[newID] != 12) {
