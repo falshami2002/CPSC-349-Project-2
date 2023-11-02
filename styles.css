@@ -236,14 +236,17 @@ h2 {
 
 
 .selectSave {
-    /* Update for better look */
+    /* Highlights save that the user clicks
+    while not assuming they are using the save
+    or loading from it*/
     background-color: #cccccc;
     margin: 0px;
     padding: 10px;
 }
 
 .activeSave {
-    /* Update for better look */
+    /* Highlights save that was actiely saved/loaded
+    by the user interacting with buttons*/
     background-color: lightgreen;
     margin: 0px;
     padding: 10px;

@@ -449,7 +449,13 @@ class Game {
 }
 
 let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"; // default chess layout
-//Create four games here that can be managed via three commands (new game, save game, load game)
+
+/* Section for Save Functionality
+    Games are loaded and saved into four slots while the current game exist as one single game board.
+    Every time a game is created or loaded in it overwrites the the game board with a new game or saved game that was loaded.
+    Information for time of saving and
+*/
+// FENS hold the four game slots and data for where chess pieces are located on the board.
 let FENS = [];
 try {
     FENS = localStorage.FENS.split(",");
@@ -458,6 +464,7 @@ try {
     FENS = ["", "", "", ""];
 }
 
+// dates hold the four save times when games were saved
 let dates = [];
 try {
     dates = localStorage.dates.split(",");
@@ -466,11 +473,14 @@ try {
     dates = ["", "", "", ""];
 }
 
+// Initiate the main game where all saves/new games will be loaded onto
 let game = new Game();
-let selectedGame = 0;
+let selectedGame = 0; // default save slot
 const saves = document.querySelectorAll(".save");
 
+
 function changeActive() {
+    // Actively change the actively used save slot when we either load or save a game.
     saves.forEach((save) => {
         save.classList.remove("activeSave");
     });
@@ -480,12 +490,13 @@ function changeActive() {
 changeActive(); // Call it once to establish save 1 as default save.
 
 function updateTime() {
+    // Update time for selected save slot based on list(dates)
     let selected = document.getElementById("s" + selectedGame);
     selected.innerHTML = "Save " + (selectedGame + 1) + " - " + dates[selectedGame];
 }
 
+// Add eventlistener when a save slot is selected updating target save
 saves.forEach((save) => {
-
     save.addEventListener("click", (event) => {
         selectedGame = event.currentTarget.id.split("")[1];
 
@@ -497,11 +508,13 @@ saves.forEach((save) => {
         save.classList.add("selectSave");
 
     })
+    // Important when website reloads to provide info of previous sessions.
     let number = save.id.split("")[1];
     save.innerHTML = "Save " + (Number(number) + 1) + " - " + dates[number];
 });
 
 function newGame() {
+    // Creates a new game and starts a new game on the single board with default chess pieces placements
     delete game;
     game = new Game();
     game.loadGameFromFEN(FEN);
@@ -509,26 +522,28 @@ function newGame() {
 }
 
 function saveGame() {
+    // Will save the game on the selected slot with time and chess piece locations saved in localStorage
     let date = new Date();
     let day = (date.getMonth() + 1) + "/" + (date.getDay() - 2);
     let time = ((date.getHours() - 1) % 12) + 1 + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + (date.getHours() > 12 ? "PM" : "AM");
     FENS[selectedGame] = game.saveGameToFEN();
     dates[selectedGame] = (day + " " + time);
     localStorage.clear();
-    localStorage.FENS = FENS;
-    localStorage.dates = dates;
-    updateTime();
-    changeActive();
+    localStorage.FENS = FENS; //FEN is saved in the list of FENS for future sessions
+    localStorage.dates = dates; //date is saved in the list of dates for future sessions
+    updateTime(); // Update the save slot display to show accurate time of save point
+    changeActive(); // Make selected save the active save for the game
 }
 
 function loadGame() {
+    // Will overwrite the current game with a new board that loads chess locations of selected save
     delete game;
     game = new Game();
     game.loadGameFromFEN(FENS[selectedGame]);
     game.drawGame();
-    changeActive();
+    changeActive(); // Make selected save the active save for the game
 }
-
+// Chess Piece Classes //
 //Pawn class
 class Pawn {
     constructor(color, id) {
