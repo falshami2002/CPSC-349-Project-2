@@ -60,16 +60,17 @@ class Game {
         this.board = [];
         this.pieces = ["&#9817", "&#9814", "&#9816", "&#9815", "&#9813", "&#9812", "&#9823", "&#9820", "&#9822", "&#9821", "&#9819", "&#9818"];
         this.code = ['P', 'R', 'N', 'B', 'Q', 'K', 'p', 'r', 'n', 'b', 'q', 'k'];
+        this.captured = [[], []];
     }
 
     loadGameFromFEN(FEN) {
         let i = 0;
-        for(let char of FEN) {
-            if(char === '/') {
+        for (let char of FEN) {
+            if (char === '/') {
                 continue;
             }
-            if(/\d/.test(char)) {
-                for(let j = 0;j<parseInt(char);j++) {
+            if (/\d/.test(char)) {
+                for (let j = 0; j < parseInt(char); j++) {
                     this.board[i++] = 12;
                 }
                 continue;
@@ -82,44 +83,41 @@ class Game {
         let FEN = "";
         let files = 0;
         let empty = 0;
-        for(let square of this.board) {
-            if(files === 8) {
-                if(empty>0) {
-                    FEN+=empty;
+        for (let square of this.board) {
+            if (files === 8) {
+                if (empty > 0) {
+                    FEN += empty;
                     empty = 0;
                 }
-                FEN+='/';
+                FEN += '/';
                 files = 0;
             }
-            if(square === 12) {
+            if (square === 12) {
                 empty++;
                 files++;
             }
             else {
-                if(empty>0) {
-                    FEN+=empty;
+                if (empty > 0) {
+                    FEN += empty;
                     empty = 0;
                 }
-                FEN+=this.code[square];
+                FEN += this.code[square];
                 files++;
-                // console.log(files);
+                console.log(files);
             }
         }
-        return FEN; // Returns FEN so that save function can locally save it in storage.
+        return FEN;
     }
 
     drawGame() {
         let squares = document.querySelectorAll('.square');
-        for(let i = 0;i<64;i++) {
-            if(this.pieces[this.board[i]]) {
+        for (let i = 0; i < 64; i++) {
+            if (this.pieces[this.board[i]]) {
                 squares[i].piece = this.board[i];
                 let par = document.createElement('p');
                 par.innerHTML = this.pieces[this.board[i]];
                 squares[i].replaceChildren(par);
-                squares[i].addEventListener("click", e => {
-                    this.getMoves(e);
-                    console.log("click");
-                });
+                squares[i].addEventListener("click", e => this.getMoves(e));
             }
             else {
                 squares[i].replaceChildren();
@@ -172,38 +170,38 @@ class Game {
             }
             curr = id;
             while ((curr + 1) % 8 != 0) {
-                if ((piece === 1 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
+                if ((piece === 1 || piece === 4) && (this.board[curr + 1] >= 0 && this.board[curr + 1] <= 5)) {
                     break;
                 }
-                if ((piece === 7 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 7 || piece === 10) && (this.board[curr + 1] >= 5 && this.board[curr + 1] <= 11)) {
                     break;
                 }
                 curr += 1;
                 moves.push(curr)
-                if ((piece === 1 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 1 || piece === 4) && (this.board[curr + 1] >= 5 && this.board[curr + 1] <= 11)) {
                     moves.push(curr);
                     break;
                 }
-                if ((piece === 7 || piece === 10) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
+                if ((piece === 7 || piece === 10) && (this.board[curr + 1] >= 0 && this.board[curr + 1] <= 5)) {
                     moves.push(curr);
                     break;
                 }
             }
             curr = id;
             while ((curr) % 8 != 0) {
-                if ((piece === 1 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
+                if ((piece === 1 || piece === 4) && (this.board[curr - 1] >= 0 && this.board[curr - 1] <= 5)) {
                     break;
                 }
-                if ((piece === 7 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 7 || piece === 10) && (this.board[curr - 1] >= 5 && this.board[curr - 1] <= 11)) {
                     break;
                 }
                 curr -= 1;
                 moves.push(curr);
-                if ((piece === 1 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 1 || piece === 4) && (this.board[curr - 1] >= 5 && this.board[curr - 1] <= 11)) {
                     moves.push(curr);
                     break;
                 }
-                if ((piece === 7 || piece === 10) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
+                if ((piece === 7 || piece === 10) && (this.board[curr - 1] >= 0 && this.board[curr - 1] <= 5)) {
                     moves.push(curr);
                     break;
                 }
@@ -432,15 +430,17 @@ class Game {
     }
 
     movePiece(e, id) {
-        let squares = document.querySelectorAll('.square');
-        let newID = e.target.id;
+        let squares = document.querySelectorAll('.square');l
+        let newID = e.currentTarget.id;
         let oldID = id;
         let piece = this.board[oldID];
-        if(piece != 12) {
-            console.log(piece);
+        if (piece != 12) {
+            if (this.board[newID] != 12) {
+                this.drawCaptured(newID);
+            }
             this.board[oldID] = 12;
             this.board[newID] = piece;
-            for(let i = 0;i<64;i++) {
+            for (let i = 0; i < 64; i++) {
                 squares[i].classList.remove('active');
             }
             this.drawGame();
@@ -492,7 +492,7 @@ changeActive(); // Call it once to establish save 1 as default save.
 function updateTime() {
     // Update time for selected save slot based on list(dates)
     let selected = document.getElementById("s" + selectedGame);
-    selected.innerHTML = "Save " + (selectedGame + 1) + " - " + dates[selectedGame];
+    selected.innerHTML = "Save " + (Number(selectedGame) + 1) + " - " + dates[selectedGame];
 }
 
 // Add eventlistener when a save slot is selected updating target save
@@ -594,17 +594,17 @@ class Rook {
         let x = parseInt(this.id.split('-')[0]);
         let y = parseInt(this.id.split('-')[1]);
         let available = [];
-        for (let i = x;i>=0;i--) {
-            available.push(i+'-'+y);
+        for (let i = x; i >= 0; i--) {
+            available.push(i + '-' + y);
         }
-        for (let i = x;i<=7;i++) {
-            available.push(i+'-'+y);
+        for (let i = x; i <= 7; i++) {
+            available.push(i + '-' + y);
         }
-        for (let i = y;i>=0;i++) {
-            available.push(x+'-'+i);
+        for (let i = y; i >= 0; i++) {
+            available.push(x + '-' + i);
         }
-        for (let i = y;i<=7;i++) {
-            available.push(x+'-'+i);
+        for (let i = y; i <= 7; i++) {
+            available.push(x + '-' + i);
         }
         return available;
     }
@@ -620,14 +620,14 @@ class Knight {
         let x = parseInt(this.id.split('-')[0]);
         let y = parseInt(this.id.split('-')[1]);
         let available = [];
-        available.push((x+2)+'-'+(y+1));
-        available.push((x+2)+'-'+(y-1));
-        available.push((x-2)+'-'+(y+1));
-        available.push((x-2)+'-'+(y-1));
-        available.push((x+1)+'-'+(y+2));
-        available.push((x-1)+'-'+(y+2));
-        available.push((x+1)+'-'+(y-2));
-        available.push((x-1)+'-'+(y-2));
+        available.push((x + 2) + '-' + (y + 1));
+        available.push((x + 2) + '-' + (y - 1));
+        available.push((x - 2) + '-' + (y + 1));
+        available.push((x - 2) + '-' + (y - 1));
+        available.push((x + 1) + '-' + (y + 2));
+        available.push((x - 1) + '-' + (y + 2));
+        available.push((x + 1) + '-' + (y - 2));
+        available.push((x - 1) + '-' + (y - 2));
         return available;
     }
 }
@@ -645,23 +645,23 @@ class Bishop {
         let available = [];
         let i = x;
         let j = y;
-        while(i>=0 && j>=0) {
-            available.push(i+'-'+j);
+        while (i >= 0 && j >= 0) {
+            available.push(i + '-' + j);
             i--;
             j--;
         }
-        while(i>=0 && j<=7) {
-            available.push(i+'-'+j);
+        while (i >= 0 && j <= 7) {
+            available.push(i + '-' + j);
             i--;
             j++;
         }
-        while(i<=7 && j>=0) {
-            available.push(i+'-'+j);
+        while (i <= 7 && j >= 0) {
+            available.push(i + '-' + j);
             i++;
             j--;
         }
-        while(i<=7 && j<=7) {
-            available.push(i+'-'+j);
+        while (i <= 7 && j <= 7) {
+            available.push(i + '-' + j);
             i++;
             j++;
         }
@@ -680,37 +680,37 @@ class Queen {
         let x = parseInt(this.id.split('-')[0]);
         let y = parseInt(this.id.split('-')[1]);
         let available = [];
-        for (let i = x;i>=0;i--) {
-            available.push(i+'-'+y);
+        for (let i = x; i >= 0; i--) {
+            available.push(i + '-' + y);
         }
-        for (let i = x;i<=7;i++) {
-            available.push(i+'-'+y);
+        for (let i = x; i <= 7; i++) {
+            available.push(i + '-' + y);
         }
-        for (let i = y;i>=0;i++) {
-            available.push(x+'-'+i);
+        for (let i = y; i >= 0; i++) {
+            available.push(x + '-' + i);
         }
-        for (let i = y;i<=7;i++) {
-            available.push(x+'-'+i);
+        for (let i = y; i <= 7; i++) {
+            available.push(x + '-' + i);
         }
         let i = x;
         let j = y;
-        while(i>=0 && j>=0) {
-            available.push(i+'-'+j);
+        while (i >= 0 && j >= 0) {
+            available.push(i + '-' + j);
             i--;
             j--;
         }
-        while(i>=0 && j<=7) {
-            available.push(i+'-'+j);
+        while (i >= 0 && j <= 7) {
+            available.push(i + '-' + j);
             i--;
             j++;
         }
-        while(i<=7 && j>=0) {
-            available.push(i+'-'+j);
+        while (i <= 7 && j >= 0) {
+            available.push(i + '-' + j);
             i++;
             j--;
         }
-        while(i<=7 && j<=7) {
-            available.push(i+'-'+j);
+        while (i <= 7 && j <= 7) {
+            available.push(i + '-' + j);
             i++;
             j++;
         }
@@ -728,14 +728,14 @@ class King {
         let x = parseInt(this.id.split('-')[0]);
         let y = parseInt(this.id.split('-')[1]);
         let available = [];
-        available.push((x+1)+'-'+y);
-        available.push((x-1)+'-'+y);
-        available.push(x+'-'+(y+1));
-        available.push(x+'-'+(y-1));
-        available.push((x+1)+'-'+(y+1));
-        available.push((x+1)+'-'+(y-1));
-        available.push((x-1)+'-'+(y+1));
-        available.push((x-1)+'-'+(y-1));
+        available.push((x + 1) + '-' + y);
+        available.push((x - 1) + '-' + y);
+        available.push(x + '-' + (y + 1));
+        available.push(x + '-' + (y - 1));
+        available.push((x + 1) + '-' + (y + 1));
+        available.push((x + 1) + '-' + (y - 1));
+        available.push((x - 1) + '-' + (y + 1));
+        available.push((x - 1) + '-' + (y - 1));
         return available;
     }
 }

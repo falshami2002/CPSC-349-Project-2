@@ -13,7 +13,7 @@ body {
     /*
     note:
 
-    Apparantly you can get a more realistic
+    Apparently you can get a more realistic
     shadow by layering a bunch on top of
     each other getting a "blended" effect.
     */
@@ -234,6 +234,24 @@ h2 {
     border: 5px solid rgb(198, 0, 0);
 }
 
+.captured-section {
+    height: 45%;
+    width: 100%;
+}
+
+.captured-area {
+    height: 95%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.captured-area p {
+    text-align: center;
+    font-size: 20px;
+}
+
 
 .selectSave {
     /* Highlights save that the user clicks
@@ -245,7 +263,7 @@ h2 {
 }
 
 .activeSave {
-    /* Highlights save that was actiely saved/loaded
+    /* Highlights save that was actively saved/loaded
     by the user interacting with buttons*/
     background-color: lightgreen;
     margin: 0px;
