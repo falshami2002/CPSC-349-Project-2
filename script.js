@@ -119,7 +119,8 @@ class Game {
     drawGame() {
         // Draws the board's chess pieces on top of the board. As well as adding listeners to each chess piece if the user wants to move the tile.
         let squares = document.querySelectorAll('.square');
-        let turn = document.querySelector('#turn').replaceChildren(document.createTextNode(this.turn === 'w' ? "White to play" : "Black to play"));
+        document.querySelector('#turn').replaceChildren(document.createTextNode(this.turn === 'w' ? "White to play" : "Black to play"));
+        document.querySelector('#turn').appendChild(document.createTextNode(this.checkForChecks(this.turn) ? " - You are in check" : ""));
         for (let i = 0; i < 64; i++) {
             squares[i].removeEventListener("click", this.getMovesCallback);
             squares[i].removeEventListener("click", this.movePieceCallback);
@@ -140,12 +141,14 @@ class Game {
     }
 
     getMovesCallback(e) {
-        game.getMoves(e);
+        game.getMoves(parseInt(e.currentTarget.id), true);
     }
 
-    getMoves(e) {
-        let id = parseInt(e.currentTarget.id);
-        this.currentID = id;
+    getMoves(pieceID, realMove) {
+        let id = pieceID;
+        if(realMove) {
+            this.currentID = id;
+        }
         let piece = this.board[id];
         let moves = [];
         // Rook (1, 7) and Queen (4, 10) straight vertical and horizontal movement
@@ -155,12 +158,12 @@ class Game {
                 if ((piece === 1 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
                     break;
                 }
-                if ((piece === 7 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 7 || piece === 10) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     break;
                 }
                 moves.push(curr)
                 curr += 8;
-                if ((piece === 1 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 1 || piece === 4) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     moves.push(curr);
                     break;
                 }
@@ -174,12 +177,12 @@ class Game {
                 if ((piece === 1 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
                     break;
                 }
-                if ((piece === 7 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 7 || piece === 10) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     break;
                 }
                 moves.push(curr)
                 curr -= 8;
-                if ((piece === 1 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 1 || piece === 4) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     moves.push(curr);
                     break;
                 }
@@ -193,17 +196,17 @@ class Game {
                 if ((piece === 1 || piece === 4) && (this.board[curr + 1] >= 0 && this.board[curr + 1] <= 5)) {
                     break;
                 }
-                if ((piece === 7 || piece === 10) && (this.board[curr + 1] >= 5 && this.board[curr + 1] <= 11)) {
+                if ((piece === 7 || piece === 10) && (this.board[curr + 1] >= 6 && this.board[curr + 1] <= 11)) {
                     break;
                 }
                 curr += 1;
                 moves.push(curr)
-                if ((piece === 1 || piece === 4) && (this.board[curr + 1] >= 5 && this.board[curr + 1] <= 11)) {
-                    moves.push(curr);
+                if ((piece === 1 || piece === 4) && (this.board[curr + 1] >= 6 && this.board[curr + 1] <= 11)) {
+                    moves.push(curr + 1);
                     break;
                 }
                 if ((piece === 7 || piece === 10) && (this.board[curr + 1] >= 0 && this.board[curr + 1] <= 5)) {
-                    moves.push(curr);
+                    moves.push(curr + 1);
                     break;
                 }
             }
@@ -212,17 +215,17 @@ class Game {
                 if ((piece === 1 || piece === 4) && (this.board[curr - 1] >= 0 && this.board[curr - 1] <= 5)) {
                     break;
                 }
-                if ((piece === 7 || piece === 10) && (this.board[curr - 1] >= 5 && this.board[curr - 1] <= 11)) {
+                if ((piece === 7 || piece === 10) && (this.board[curr - 1] >= 6 && this.board[curr - 1] <= 11)) {
                     break;
                 }
                 curr -= 1;
                 moves.push(curr);
-                if ((piece === 1 || piece === 4) && (this.board[curr - 1] >= 5 && this.board[curr - 1] <= 11)) {
-                    moves.push(curr);
+                if ((piece === 1 || piece === 4) && (this.board[curr - 1] >= 6 && this.board[curr - 1] <= 11)) {
+                    moves.push(curr - 1);
                     break;
                 }
                 if ((piece === 7 || piece === 10) && (this.board[curr - 1] >= 0 && this.board[curr - 1] <= 5)) {
-                    moves.push(curr);
+                    moves.push(curr - 1);
                     break;
                 }
             }
@@ -234,15 +237,13 @@ class Game {
                 if ((piece === 3 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
                     break;
                 }
-                if ((piece === 9 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 9 || piece === 10) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     break;
                 }
                 if ((curr + 1) % 8 === 0) {
                     break;
                 }
-                moves.push(curr);
-                curr += 7;
-                if ((piece === 3 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 3 || piece === 4) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     moves.push(curr);
                     break;
                 }
@@ -250,21 +251,22 @@ class Game {
                     moves.push(curr);
                     break;
                 }
+                moves.push(curr);
+                curr += 7;
             }
             curr = id - 7;
             while (curr >= 0) {
                 if ((piece === 3 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
                     break;
                 }
-                if ((piece === 9 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 9 || piece === 10) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     break;
                 }
                 if (curr % 8 === 0) {
                     break;
                 }
-                moves.push(curr);
-                curr -= 7;
-                if ((piece === 3 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 3 || piece === 4) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
+                    console.log("SOMETHING" + curr);
                     moves.push(curr);
                     break;
                 }
@@ -272,22 +274,22 @@ class Game {
                     moves.push(curr);
                     break;
                 }
+                moves.push(curr);
+                curr -= 7;
             }
             curr = id + 9;
             while (curr < 64) {
                 if ((piece === 3 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
                     break;
                 }
-                if ((piece === 9 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 9 || piece === 10) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     break;
                 }
                 if ((curr + 1) % 8 === 0) {
                     moves.push(curr);
                     break;
                 }
-                moves.push(curr);
-                curr += 9;
-                if ((piece === 3 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 3 || piece === 4) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     moves.push(curr);
                     break;
                 }
@@ -295,22 +297,22 @@ class Game {
                     moves.push(curr);
                     break;
                 }
+                moves.push(curr);
+                curr += 9;
             }
             curr = id - 9;
             while (curr >= 0) {
                 if ((piece === 3 || piece === 4) && (this.board[curr] >= 0 && this.board[curr] <= 5)) {
                     break;
                 }
-                if ((piece === 9 || piece === 10) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 9 || piece === 10) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     break;
                 }
                 if (curr % 8 === 0) {
                     moves.push(curr);
                     break;
                 }
-                moves.push(curr);
-                curr -= 9;
-                if ((piece === 3 || piece === 4) && (this.board[curr] >= 5 && this.board[curr] <= 11)) {
+                if ((piece === 3 || piece === 4) && (this.board[curr] >= 6 && this.board[curr] <= 11)) {
                     moves.push(curr);
                     break;
                 }
@@ -318,55 +320,57 @@ class Game {
                     moves.push(curr);
                     break;
                 }
+                moves.push(curr);
+                curr -= 9;
             }
         }
         // Knight (2, 8) Movement
         if (piece === 2 || piece === 8) {
             let curr = id + 10;
             if (Math.floor(id / 8) + 1 === Math.floor(curr / 8) && curr < 64) {
-                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id + 6;
             if (Math.floor(id / 8) + 1 === Math.floor(curr / 8) && curr < 64) {
-                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id + 17;
             if (Math.floor(id / 8) + 2 === Math.floor(curr / 8) && curr < 64) {
-                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id + 15;
             if (Math.floor(id / 8) + 2 === Math.floor(curr / 8) && curr < 64) {
-                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id - 10;
             if (Math.floor(id / 8) - 1 === Math.floor(curr / 8) && curr > 0) {
-                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id - 6;
             if (Math.floor(id / 8) - 1 === Math.floor(curr / 8) && curr > 0) {
-                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id - 17;
             if (Math.floor(id / 8) - 2 === Math.floor(curr / 8) && curr > 0) {
-                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id - 15;
             if (Math.floor(id / 8) - 2 === Math.floor(curr / 8) && curr > 0) {
-                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 2 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 8 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
@@ -380,10 +384,10 @@ class Game {
                 if (Math.floor(id / 8) === 6 && this.board[id - 8] === 12 && this.board[id - 16] === 12) {
                     moves.push(id - 16);
                 }
-                if (this.board[id - 7] >= 5 && this.board[id - 7] <= 11) {
+                if (this.board[id - 7] >= 6 && this.board[id - 7] <= 11) {
                     moves.push(id - 7);
                 }
-                if (this.board[id - 9] >= 5 && this.board[id - 9] <= 11) {
+                if (this.board[id - 9] >= 6 && this.board[id - 9] <= 11) {
                     moves.push(id - 9);
                 }
             }
@@ -406,66 +410,69 @@ class Game {
         if (piece === 5 || piece === 11) {
             let curr = id + 8;
             if (curr < 64) {
-                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id - 8;
             if (curr >= 0) {
-                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id + 1;
             if (Math.floor(id / 8) === Math.floor(curr / 8)) {
-                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id - 1;
             if (Math.floor(id / 8) === Math.floor(curr / 8)) {
-                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id + 9;
             if (Math.floor(id / 8) + 1 === Math.floor(curr / 8)) {
-                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id + 7;
             if (Math.floor(id / 8) + 1 === Math.floor(curr / 8)) {
-                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id - 9;
             if (Math.floor(id / 8) - 1 === Math.floor(curr / 8)) {
-                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
             curr = id - 7;
             if (Math.floor(id / 8) - 1 === Math.floor(curr / 8)) {
-                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 5 && this.board[curr] <= 11)))) {
+                if (!((piece === 5 && (this.board[curr] >= 0 && this.board[curr] <= 5)) || (piece === 11 && (this.board[curr] >= 6 && this.board[curr] <= 11)))) {
                     moves.push(curr);
                 }
             }
         }
         // Resets active squares
-        let squares = document.querySelectorAll('.square');
-        for (let i = 0; i < 64; i++) {
-            squares[i].classList.remove('active');
-            squares[i].removeEventListener("click", this.movePieceCallback);
-        }
-        // Based on moves found for the selected piece will show active squares that the player move to
-        for (let i = 0; i < 64; i++) {
-            if (moves.includes(parseInt(squares[i].id))) {
-                squares[i].classList.add('active');
-                squares[i].addEventListener('click', this.movePieceCallback);
+        if(realMove) {
+            let squares = document.querySelectorAll('.square');
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+                squares[i].removeEventListener("click", this.movePieceCallback);
+            }
+            // Based on moves found for the selected piece will show active squares that the player move to
+            for (let i = 0; i < 64; i++) {
+                if (moves.includes(parseInt(squares[i].id))) {
+                    squares[i].classList.add('active');
+                    squares[i].addEventListener('click', this.movePieceCallback);
+                }
             }
         }
+        return moves;
     }
 
     movePieceCallback(e) {
@@ -497,6 +504,33 @@ class Game {
             }
             this.drawGame();
         }
+    }
+
+    // Checks if there is any check currently on the board 
+    checkForChecks(color) {
+        let moves = [];
+        if (color === 'w') {
+            for(let i = 0; i<64; i++) {
+                if(this.board[i] >= 6 && this.board[i] <= 11) {
+                    moves = moves.concat(this.getMoves(i, false));
+                }
+            }
+            console.log(moves);
+            if(moves.includes(this.board.indexOf(5))) {
+                return true;
+            }
+        }
+        else {
+            for(let i = 0; i<64; i++) {
+                if(this.board[i] >= 0 && this.board[i] <= 5) {
+                    moves = moves.concat(this.getMoves(i, false));
+                }
+            }
+            if(moves.includes(this.board.indexOf(11))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Updates board on pieces that are captured
