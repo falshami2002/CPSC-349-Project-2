@@ -74,7 +74,7 @@ body {
     box-shadow: var(--basic-shadow);
 }
 
-/* 
+/*
 .about ul {
     display: flex;
     justify-content: space-between;
@@ -373,4 +373,8 @@ h2 {
     /* text-align: center; */
     margin-left: 3em;
 
+}
+
+#turn {
+    font-size: x-large;
 }
