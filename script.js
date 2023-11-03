@@ -490,9 +490,9 @@ class Game {
             if (this.board[newID] != 12) {
                 this.drawCaptured(this.board[newID]);
                 updateCapture(newID);
-                updateHistory(newID, piece, this.turn, 1)
+                updateHistory(newID, piece, this.turn, 1, game.checkForChecks("w"), game.checkForChecks("b"));
             } else {
-                updateHistory(newID, piece, this.turn, 0)
+                updateHistory(newID, piece, this.turn, 0, game.checkForChecks("w"), game.checkForChecks("b"));
             }
             this.board[oldID] = 12;
             this.board[newID] = piece;
@@ -509,7 +509,7 @@ class Game {
         }
     }
 
-    // Checks if there is any check currently on the board 
+    // Checks if there is any check currently on the board
     checkForChecks(color) {
         let moves = [];
         if (color === 'w') {
@@ -622,7 +622,8 @@ function resetCapture(tempCapture) {
     }
 }
 
-function updateHistory(newID, piece, turn, capture) {
+// Make a move history of the last four moves from both players. (Chess Piece ex.(Q,K,R,*blank*(p))(x(if capture))(col)(row)(+(for checkmate)))
+function updateHistory(newID, piece, turn, capture, whiteCheck, blackCheck) {
     let move = "";
     // If pawn, dont add piece at the front of the move history
     if (piece != 0 && piece != 6) {
@@ -634,9 +635,10 @@ function updateHistory(newID, piece, turn, capture) {
     move += colNew + rowNew;
     console.log(move); // Check for valid position
     //Implement + when check make happens later
-
+    // Note* - the + is implement below is wrong, but lets pretend it works (confused)
     // To save this moves in our tempHistory
     if (turn == "w") { // White turn
+        if (blackCheck) move += "+";
         let full = 4;
         for (let i = 0; i < 4; i++) {
             if (tempHistory[i][0] == "") {
@@ -651,6 +653,7 @@ function updateHistory(newID, piece, turn, capture) {
             tempHistory[3] = [move, ""];
         }
     } else { // Black turn
+        if (whiteCheck) move += "+";
         for (let i = 0; i < 4; i++) {
             if (tempHistory[i][1] == "") {
                 tempHistory[i][1] = move;
@@ -659,8 +662,15 @@ function updateHistory(newID, piece, turn, capture) {
         }
     }
     console.log(tempHistory);
+    changeHistoryDisplay();
 }
 
+function changeHistoryDisplay() {
+    moves.forEach((move) => {
+        let set = tempHistory[move.id.split("")[1]];
+        move.innerHTML = set[0] + " - " + set[1];
+    });
+}
 function changeActive() {
     // Actively change the actively used save slot when we either load or save a game.
     saves.forEach((save) => {
@@ -702,7 +712,9 @@ function newGame() {
     game.loadGameFromFEN(FEN);
     game.drawGame();
     tempCapture = "";
+    tempHistory = [["", ""], ["", ""], ["", ""], ["", ""]];
     resetCapture(tempCapture);
+    changeHistoryDisplay();
 }
 
 function saveGame() {
@@ -714,11 +726,13 @@ function saveGame() {
     FENS[selectedGame] = game.saveGameToFEN();
     dates[selectedGame] = " - " + (day + " " + time);
     captured[selectedGame] = tempCapture;
+    history[selectedGame] = tempHistory;
 
     localStorage.clear();
     localStorage.FENS = FENS; //FEN is saved in the list of FENS for future sessions
     localStorage.dates = dates; //date is saved in the list of dates for future sessions
     localStorage.captured = captured;
+    localStorage.history = history;
 
     updateTime(); // Update the save slot display to show accurate time of save point
     changeActive(); // Make selected save the active save for the game
@@ -731,9 +745,9 @@ function loadGame() {
     game = new Game();
     game.loadGameFromFEN(FENS[selectedGame]);
     tempCapture = captured[selectedGame];
+    tempHistory = history[selectedGame];
     game.drawGame();
     changeActive(); // Make selected save the active save for the game
     resetCapture(tempCapture);
+    changeHistoryDisplay();
 }
-
-// Make a move history of the last four moves from both players. (Chess Piece ex.(Q,K,R,*blank*(p))(x(if capture))(col)(row)(+(for checkmate)))
