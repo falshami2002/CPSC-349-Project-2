@@ -591,7 +591,7 @@ let history = [[["", ""], ["", ""], ["", ""], ["", ""]],
 [["", ""], ["", ""], ["", ""], ["", ""]],
 [["", ""], ["", ""], ["", ""], ["", ""]],
 [["", ""], ["", ""], ["", ""], ["", ""]]];
-//try {
+try {
     temp = localStorage.history.split(",");
     console.log(temp);
     for (let i = 0; i < 16; i++) {
@@ -599,15 +599,10 @@ let history = [[["", ""], ["", ""], ["", ""], ["", ""]],
         history[Math.floor(i / 4)][(i % 4)] = set;
     }
     console.log(history);
-    /*
 } catch (SyntaxError) {
     console.log("No history - Using default value");
-    history = [[["", ""], ["", ""], ["", ""], ["", ""]],
-               [["", ""], ["", ""], ["", ""], ["", ""]],
-               [["", ""], ["", ""], ["", ""], ["", ""]],
-               [["", ""], ["", ""], ["", ""], ["", ""]]];
 }
-*/
+
 // Initiate the main game where all saves/new games will be loaded onto
 let game = new Game();
 let selectedGame = 0; // default save slot
