@@ -471,7 +471,7 @@ class Game {
     movePieceCallback(e) {
         game.movePiece(e);
     }
-    
+
     // Moves piece into possible active square. Also checks if location has an existing piece or is empty with respected response
     movePiece(e) {
         let squares = document.querySelectorAll('.square');
@@ -483,6 +483,9 @@ class Game {
             if (this.board[newID] != 12) {
                 this.drawCaptured(this.board[newID]);
                 updateCapture(newID);
+                updateHistory(newID, piece, this.turn, 1)
+            } else {
+                updateHistory(newID, piece, this.turn, 0)
             }
             this.board[oldID] = 12;
             this.board[newID] = piece;
@@ -517,7 +520,8 @@ class Game {
 }
 
 let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"; // default chess layout
-
+let row = ["8", "7", "6", "5", "4", "3", "2", "1"];
+let col = ["a", "b", "c", "d", "e", "f", "g", "h"];
 /* Section for Save Functionality
     Games are loaded and saved into four slots while the current game exist as one single game board.
     Every time a game is created or loaded in it overwrites the the game board with a new game or saved game that was loaded.
@@ -537,7 +541,7 @@ let dates = [];
 try {
     dates = localStorage.dates.split(",");
 } catch (SyntaxError) {
-    console.log("No DATES - Using default value")
+    console.log("No DATES - Using default value");
     dates = ["", "", "", ""];
 }
 
@@ -545,15 +549,28 @@ let captured = [];
 try {
     captured = localStorage.captured.split(",");
 } catch (SyntaxError) {
-    console.log("No captured - Using default value")
+    console.log("No captured - Using default value");
     captured = ["", "", "", ""];
+}
+
+let history = [];
+try {
+    history = localStorage.history.split(",");
+} catch (SyntaxError) {
+    console.log("No history - Using default value");
+    history = [[["", ""], ["", ""], ["", ""], ["", ""]],
+               [["", ""], ["", ""], ["", ""], ["", ""]],
+               [["", ""], ["", ""], ["", ""], ["", ""]],
+               [["", ""], ["", ""], ["", ""], ["", ""]]];
 }
 
 // Initiate the main game where all saves/new games will be loaded onto
 let game = new Game();
 let selectedGame = 0; // default save slot
 const saves = document.querySelectorAll(".save");
+const moves = document.querySelectorAll(".move");
 let tempCapture = "";
+let tempHistory = [["", ""], ["", ""], ["", ""], ["", ""]];
 
 function updateCapture(ID) {
     tempCapture += game.code[game.board[ID]];
@@ -569,6 +586,45 @@ function resetCapture(tempCapture) {
             game.drawCaptured(game.code.indexOf(char));
         }
     }
+}
+
+function updateHistory(newID, piece, turn, capture) {
+    let move = "";
+    // If pawn, dont add piece at the front of the move history
+    if (piece != 0 && piece != 6) {
+        move += game.code[piece];
+    }
+    if (capture == 1) move += "x"; // Add x if capture
+    let rowNew = row[Math.floor(newID / 8)];
+    let colNew = col[newID % 8];
+    move += colNew + rowNew;
+    console.log(move); // Check for valid position
+    //Implement + when check make happens later
+
+    // To save this moves in our tempHistory
+    if (turn == "w") { // White turn
+        let full = 4;
+        for (let i = 0; i < 4; i++) {
+            if (tempHistory[i][0] == "") {
+                tempHistory[i][0] = move;
+                break;
+            } else full--;
+        }
+        if (full == 0) {
+            for (let i = 0; i < 3; i++) {
+                tempHistory[i] = tempHistory[i + 1];
+            }
+            tempHistory[3] = [move, ""];
+        }
+    } else { // Black turn
+        for (let i = 0; i < 4; i++) {
+            if (tempHistory[i][1] == "") {
+                tempHistory[i][1] = move;
+                break;
+            }
+        }
+    }
+    console.log(tempHistory);
 }
 
 function changeActive() {
@@ -620,7 +676,7 @@ function saveGame() {
     let date = new Date();
     let day = (date.getMonth() + 1) + "/" + (date.getDay() - 2);
     let time = ((date.getHours() - 1) % 12) + 1 + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + (date.getHours() > 12 ? "PM" : "AM");
-    
+
     FENS[selectedGame] = game.saveGameToFEN();
     dates[selectedGame] = " - " + (day + " " + time);
     captured[selectedGame] = tempCapture;
@@ -645,3 +701,5 @@ function loadGame() {
     changeActive(); // Make selected save the active save for the game
     resetCapture(tempCapture);
 }
+
+// Make a move history of the last four moves from both players. (Chess Piece ex.(Q,K,R,*blank*(p))(x(if capture))(col)(row)(+(for checkmate)))
