@@ -74,7 +74,7 @@ body {
     box-shadow: var(--basic-shadow);
 }
 
-/* 
+/*
 .about ul {
     display: flex;
     justify-content: space-between;
@@ -86,7 +86,34 @@ body {
     text-align: center;
     /* border: 1px solid black; */
     color: var(--text-color);
+    position: relative;
+    display: inline-block;
+
 }
+
+.about li .aboutcard {
+    visibility: hidden;
+    width: 200px;
+    height: 300px;
+    background-color: var(--off-white);
+    color: var(--text-color);
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -100px;
+}
+.about li:hover .aboutcard {
+    visibility: visible;
+    box-shadow: var(--basic-shadow);
+  }
+
+
 
 
 
@@ -126,13 +153,14 @@ body {
     .about img {
         width: 25%;
         border-radius: 25%;
-        transition: .4s;
+        /* transition: .4s; */
     }
 
     .about img:hover {
         width: 30%;
         box-shadow: var(--basic-shadow);
     }
+
 
 
     .info-window h1,
@@ -179,13 +207,8 @@ body {
     .about img {
         width: 70%;
         border-radius: 25%;
-        transition: .4s;
     }
 
-    .about img:hover {
-        width: 75%;
-        box-shadow: var(--basic-shadow);
-    }
 
     .captured-section {
         height: 40%;
@@ -243,6 +266,7 @@ body {
     color: var(--light);
 }
 
+p, 
 h1,
 h2 {
     text-align: center;
@@ -373,4 +397,8 @@ h2 {
     /* text-align: center; */
     margin-left: 3em;
 
+}
+
+#turn {
+    font-size: x-large;
 }
