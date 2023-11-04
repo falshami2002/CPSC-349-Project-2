@@ -266,7 +266,7 @@ body {
     color: var(--light);
 }
 
-.info-window 
+p, 
 h1,
 h2 {
     text-align: center;
