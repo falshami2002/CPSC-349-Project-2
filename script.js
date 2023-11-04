@@ -67,7 +67,8 @@ class Game {
     loadGameFromFEN(FEN) {
         // Given a FEN it will be able to place the chess pieces throughout the board. Can produce starting chess layout or saved game layouts.
         let i = 0;
-        for (let char of FEN) {
+        let FENBoard = FEN.split(' ')[0];
+        for (let char of FENBoard) {
             if (char === ' ') {
                 break;
             }
@@ -82,7 +83,24 @@ class Game {
             }
             this.board[i++] = this.code.indexOf(char);
         }
-        this.turn = FEN[FEN.length - 1];
+        this.turn = FEN.split(' ')[1];
+        let FENCastling = FEN.split(' ')[2];
+        if (FENCastling.includes('Q')) {
+            document.getElementById('60').castling = true;
+            document.getElementById('56').castling = true;
+        }
+        if (FENCastling.includes('K')) {
+            document.getElementById('60').castling = true;
+            document.getElementById('63').castling = true;
+        }
+        if (FENCastling.includes('q')) {
+            document.getElementById('4').castling = true;
+            document.getElementById('0').castling = true;
+        }
+        if (FENCastling.includes('k')) {
+            document.getElementById('4').castling = true;
+            document.getElementById('7').castling = true;
+        }
     }
 
     saveGameToFEN() {
@@ -112,7 +130,28 @@ class Game {
                 files++;
             }
         }
-        FEN += " " + this.turn;
+        FEN += " " + this.turn + " ";
+        let K = document.getElementById('60').castling;
+        let KR = document.getElementById('63').castling;
+        let QR = document.getElementById('56').castling;
+        let k = document.getElementById('4').castling;
+        let kr = document.getElementById('7').castling;
+        let qr = document.getElementById('0').castling;
+        if(K & KR) {
+            FEN+='K';
+        }
+        if(K & QR) {
+            FEN+='Q';
+        }
+        if(k & kr) {
+            FEN+='k';
+        }
+        if(k & qr) {
+            FEN+='q';
+        }
+        if((!(K & KR)) && (!(K & QR)) && (!(k & kr)) && (!(k & qr))) {
+            FEN+='-';
+        }
         return FEN;
     }
 
@@ -129,7 +168,7 @@ class Game {
                 let par = document.createElement('p');
                 par.innerHTML = this.pieces[this.board[i]];
                 squares[i].replaceChildren(par);
-                if((this.turn === 'w' && (this.board[i] >= 0 && this.board[i] <= 5)) || (this.turn === 'b' && (this.board[i] >= 5 && this.board[i] <= 11)))
+                if((this.turn === 'w' && (this.board[i] >= 0 && this.board[i] <= 5)) || (this.turn === 'b' && (this.board[i] >= 6 && this.board[i] <= 11)))
                 {
                     squares[i].addEventListener("click", this.getMovesCallback);
                 }
@@ -455,6 +494,56 @@ class Game {
                     moves.push(curr);
                 }
             }
+            if(piece === 5 && id === 60) {
+                let K = document.getElementById('60').castling;
+                let KR = document.getElementById('63').castling;
+                let QR = document.getElementById('56').castling;
+                let KEmpty = true;
+                let QEmpty = true;
+                for(let i = 61;i<63;i++){
+                    if(this.board[i] != 12) {
+                        KEmpty = false;
+                        break;
+                    }
+                }
+                for(let i = 57;i<60;i++){
+                    if(this.board[i] != 12) {
+                        QEmpty = false;
+                        break;
+                    }
+                }
+                if(K && KR && KEmpty) {
+                    moves.push(id+2);
+                }
+                if(K && QR && QEmpty) {
+                    moves.push(id-2);
+                }
+            }
+            else if(piece === 11 && id === 4) {
+                let k = document.getElementById('4').castling;
+                let kr = document.getElementById('7').castling;
+                let qr = document.getElementById('0').castling;
+                let KEmpty = true;
+                let QEmpty = true;
+                for(let i = 1;i<4;i++){
+                    if(this.board[i] != 12) {
+                        KEmpty = false;
+                        break;
+                    }
+                }
+                for(let i = 5;i<7;i++){
+                    if(this.board[i] != 12) {
+                        QEmpty = false;
+                        break;
+                    }
+                }
+                if(k && kr && KEmpty) {
+                    moves.push(id+2);
+                }
+                if(k && qr && QEmpty) {
+                    moves.push(id-2);
+                }
+            }
         }
         // If you are in check, you can only make moves to put you out of check
         // If you are not in check, you can't make a move that puts you in check
@@ -496,8 +585,128 @@ class Game {
         let squares = document.querySelectorAll('.square');
         let newID = e.currentTarget.id;
         let oldID = game.currentID;
-        console.log(oldID);
         let piece = this.board[oldID];
+        if (piece === 1 || piece === 5) {
+            if(oldID === 63) {
+                document.getElementById(oldID).castling = false;
+            } 
+            else if(oldID === 56) {
+                document.getElementById(oldID).castling = false;
+            } 
+            else if(oldID === 60) {
+                document.getElementById(oldID).castling = false;            
+            }
+        }
+        if (piece === 7 || piece === 11) {
+            if(oldID === 0) {
+                document.getElementById(oldID).castling = false;
+            } 
+            else if(oldID === 7) {
+                document.getElementById(oldID).castling = false;
+            } 
+            else if(oldID === 4) {
+                document.getElementById(oldID).castling = false;            
+            }
+        }
+        if (piece === 5 && newID - oldID === 2) {
+            this.board[oldID] = 12;
+            this.board[newID] = 5;
+            this.board[newID - 1] = 1;
+            this.board[63] = 12;
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
+            }
+            this.drawGame();
+            return;
+        }
+        if (piece === 5 && oldID - newID === 2) {
+            this.board[oldID] = 12;
+            this.board[newID] = 5;
+            this.board[newID + 1] = 1;
+            this.board[56] = 12;
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
+            }
+            this.drawGame();
+            return;
+        }
+        if (piece === 11 && newID - oldID === 2) {
+            this.board[oldID] = 12;
+            this.board[newID] = 11;
+            this.board[newID - 1] = 7;
+            this.board[7] = 12;
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
+            }
+            this.drawGame();
+            return;
+        }
+        if (piece === 5 && newID - oldID === 2) {
+            this.board[oldID] = 12;
+            this.board[newID] = 11;
+            this.board[newID + 1] = 7;
+            this.board[0] = 12;
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
+            }
+            this.drawGame();
+            return;
+        }
+        console.log(Math.floor(newID / 8))
+        if (piece === 0 && Math.floor(newID / 8) === 0) {
+            this.board[oldID] = 12;
+            this.board[newID] = 4;
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
+            }
+            this.drawGame();
+            return;
+        }
+        if (piece === 6 && Math.floor(newID / 8) === 7) {
+            this.board[oldID] = 12;
+            this.board[newID] = 10;
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
+            }
+            this.drawGame();
+            return;
+        }
         if (piece != 12) {
             if (this.board[newID] != 12) {
                 this.drawCaptured(this.board[newID]);
@@ -564,7 +773,7 @@ class Game {
     }
 }
 
-let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"; // default chess layout
+let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq"; // default chess layout
 let row = ["8", "7", "6", "5", "4", "3", "2", "1"];
 let col = ["a", "b", "c", "d", "e", "f", "g", "h"];
 /* Section for Save Functionality
