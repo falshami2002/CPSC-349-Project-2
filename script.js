@@ -676,6 +676,37 @@ class Game {
             this.drawGame();
             return;
         }
+        console.log(Math.floor(newID / 8))
+        if (piece === 0 && Math.floor(newID / 8) === 0) {
+            this.board[oldID] = 12;
+            this.board[newID] = 4;
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
+            }
+            this.drawGame();
+            return;
+        }
+        if (piece === 6 && Math.floor(newID / 8) === 7) {
+            this.board[oldID] = 12;
+            this.board[newID] = 10;
+            for (let i = 0; i < 64; i++) {
+                squares[i].classList.remove('active');
+            }
+            if(this.turn === 'w') {
+                this.turn = 'b';
+            }
+            else {
+                this.turn = 'w';
+            }
+            this.drawGame();
+            return;
+        }
         if (piece != 12) {
             if (this.board[newID] != 12) {
                 this.drawCaptured(this.board[newID]);
