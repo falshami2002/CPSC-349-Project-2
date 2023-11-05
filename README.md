@@ -6,6 +6,8 @@ Louis Oporto <br>
 Firas Alshami <br>
 Randell Lapid <br>
 
+Github Pages: https://falshami2002.github.io/CPSC-349-Project-2/ <br>
+Github Repository: https://github.com/falshami2002/CPSC-349-Project-2/ <br>
 ## GAME SAVES
 -New Game-
     A new game is made with all pieces in the starting position. If there was a previous game played it must be saved before creating a new game else it will be lost.
