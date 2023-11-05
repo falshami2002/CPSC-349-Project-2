@@ -158,8 +158,15 @@ class Game {
     drawGame() {
         // Draws the board's chess pieces on top of the board. As well as adding listeners to each chess piece if the user wants to move the tile.
         let squares = document.querySelectorAll('.square');
-        document.querySelector('#turn').replaceChildren(document.createTextNode(this.turn === 'w' ? "White to play" : "Black to play"));
-        document.querySelector('#turn').appendChild(document.createTextNode(this.checkForChecks(this.turn) ? " - You are in check" : ""));
+        let turnDisplay = document.querySelector('#turn');
+        turnDisplay.replaceChildren(document.createTextNode(this.turn === 'w' ? "White to play" : "Black to play"));
+        turnDisplay.appendChild(document.createTextNode(this.checkForChecks(this.turn) ? " - You are in check" : ""));
+        if(this.countAvailableMoves() === 0 && this.checkForChecks(this.turn)) {
+            turnDisplay.replaceChildren(document.createTextNode(this.turn === 'w' ? "Black wins by checkmate" : "White wins by checkmate"));
+        }
+        else if(this.countAvailableMoves() === 0) {
+            turnDisplay.replaceChildren(document.createTextNode("Draw by stalemate"));
+        }
         for (let i = 0; i < 64; i++) {
             squares[i].removeEventListener("click", this.getMovesCallback);
             squares[i].removeEventListener("click", this.movePieceCallback);
@@ -180,10 +187,10 @@ class Game {
     }
 
     getMovesCallback(e) {
-        game.getMoves(parseInt(e.currentTarget.id), true);
+        game.getMoves(parseInt(e.currentTarget.id), true, true);
     }
 
-    getMoves(pieceID, realMove, board = this.board) {
+    getMoves(pieceID, realMove, checks, board = this.board) {
         let id = pieceID;
         if(realMove) {
             this.currentID = id;
@@ -547,7 +554,7 @@ class Game {
         }
         // If you are in check, you can only make moves to put you out of check
         // If you are not in check, you can't make a move that puts you in check
-        if(realMove) {
+        if(checks) {
             for(let i = 0;i<moves.length;i++) {
                 let theoretical = board.slice();
                 theoretical[id] = 12;
@@ -738,7 +745,7 @@ class Game {
         if (color === 'w') {
             for(let i = 0; i<64; i++) {
                 if(board[i] >= 6 && board[i] <= 11) {
-                    moves = moves.concat(this.getMoves(i, false, board));
+                    moves = moves.concat(this.getMoves(i, false, false, board));
                 }
             }
             if (moves.includes(board.indexOf(5))) {
@@ -748,7 +755,7 @@ class Game {
         else {
             for(let i = 0; i<64; i++) {
                 if(board[i] >= 0 && board[i] <= 5) {
-                    moves = moves.concat(this.getMoves(i, false, board));
+                    moves = moves.concat(this.getMoves(i, false, false, board));
                 }
             }
             if (moves.includes(board.indexOf(11))) {
@@ -756,6 +763,26 @@ class Game {
             }
         }
         return false;
+    }
+
+    // Check for available moves to determine if the current player is in checkmate or stalemate
+    countAvailableMoves() {
+        let moves = [];
+        if(this.turn == 'w') {
+            for(let i = 0;i<64;i++) {
+                if(this.board[i] >= 0 && this.board[i] <= 5) {
+                    moves = moves.concat(this.getMoves(i, false, true));
+                }
+            }
+        }
+        else {
+            for(let i = 0;i<64;i++) {
+                if(this.board[i] >= 6 && this.board[i] <= 11) {
+                    moves = moves.concat(this.getMoves(i, false, true));
+                }
+            }
+        }
+        return moves.length;
     }
 
     // Updates board on pieces that are captured
