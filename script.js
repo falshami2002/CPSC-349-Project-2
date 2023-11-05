@@ -101,6 +101,14 @@ class Game {
             document.getElementById('4').castling = true;
             document.getElementById('7').castling = true;
         }
+        let FENenpassant = FEN.split(' ')[3];
+        if(FENenpassant != "-") {
+            document.getElementById(`${FENenpassant}`).enpassant = true;
+        }
+        let squares = document.querySelectorAll('.square');
+        for(let square of squares) {
+            square.classList.remove("active");
+        }
     }
 
     saveGameToFEN() {
@@ -152,6 +160,16 @@ class Game {
         if((!(K & KR)) && (!(K & QR)) && (!(k & kr)) && (!(k & qr))) {
             FEN+='-';
         }
+        FEN += " ";
+        let FENenpassant = "-";
+        let squares = document.querySelectorAll('.square');
+        for(let i = 0;i<64;i++) {
+            if(squares[i].enpassant) {
+                FENenpassant = i;
+                break;
+            }
+        }
+        FEN += FENenpassant;
         return FEN;
     }
 
@@ -429,10 +447,10 @@ class Game {
                 if (Math.floor(id / 8) === 6 && board[id - 8] === 12 && board[id - 16] === 12) {
                     moves.push(id - 16);
                 }
-                if (this.board[id - 7] >= 6 && board[id - 7] <= 11) {
+                if ((this.board[id - 7] >= 6 && board[id - 7] <= 11) || document.getElementById(id-7).enpassant) {
                     moves.push(id - 7);
                 }
-                if (this.board[id - 9] >= 6 && board[id - 9] <= 11) {
+                if ((this.board[id - 9] >= 6 && board[id - 9] <= 11) || document.getElementById(id-9).enpassant) {
                     moves.push(id - 9);
                 }
             }
@@ -443,10 +461,10 @@ class Game {
                 if (Math.floor(id / 8) === 1 && board[id + 8] === 12 && board[id + 16] === 12) {
                     moves.push(id + 16);
                 }
-                if (this.board[id + 7] >= 0 && board[id + 7] <= 5) {
+                if ((this.board[id + 7] >= 0 && board[id + 7] <= 5) || document.getElementById(id+7).enpassant) {
                     moves.push(id + 7);
                 }
-                if (this.board[id + 9] >= 0 && board[id + 9] <= 5) {
+                if ((this.board[id + 9] >= 0 && board[id + 9] <= 5) || document.getElementById(id+9).enpassant) {
                     moves.push(id + 9);
                 }
             }
@@ -683,7 +701,6 @@ class Game {
             this.drawGame();
             return;
         }
-
         if (piece === 0 && Math.floor(newID / 8) === 0) {
             this.board[oldID] = 12;
             this.board[newID] = 4;
@@ -714,6 +731,16 @@ class Game {
             this.drawGame();
             return;
         }
+        if(piece === 0 || piece === 6) {
+            if(piece === 0 && document.getElementById(newID).enpassant) {
+                this.board[newID] = 6;
+                this.board[parseInt(newID)+8] = 12;
+            }
+            else if(piece === 6 && document.getElementById(newID).enpassant) {
+                this.board[newID] = 0;
+                this.board[parseInt(newID)-8] = 12;
+            }
+        }
         if (piece != 12) {
             if (this.board[newID] != 12) {
                 this.drawCaptured(this.board[newID]);
@@ -728,12 +755,21 @@ class Game {
             }
             for (let i = 0; i < 64; i++) {
                 squares[i].classList.remove('active');
+                squares[i].enpassant = false;
             }
             if(this.turn === 'w') {
                 this.turn = 'b';
             }
             else {
                 this.turn = 'w';
+            }
+            if(piece === 0 || piece === 6) {
+                if(newID - oldID === 16) {
+                    document.getElementById(oldID+8).enpassant = true;
+                }
+                else if(oldID - newID === 16) {
+                    document.getElementById(oldID-8).enpassant = true;
+                }
             }
             this.drawGame();
         }
@@ -802,7 +838,7 @@ class Game {
     }
 }
 
-let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq"; // default chess layout
+let FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -"; // default chess layout
 let row = ["8", "7", "6", "5", "4", "3", "2", "1"];
 let col = ["a", "b", "c", "d", "e", "f", "g", "h"];
 /* Section for Save Functionality
