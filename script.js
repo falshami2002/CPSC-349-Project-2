@@ -589,23 +589,23 @@ class Game {
         if (piece === 1 || piece === 5) {
             if(oldID === 63) {
                 document.getElementById(oldID).castling = false;
-            } 
+            }
             else if(oldID === 56) {
                 document.getElementById(oldID).castling = false;
-            } 
+            }
             else if(oldID === 60) {
-                document.getElementById(oldID).castling = false;            
+                document.getElementById(oldID).castling = false;
             }
         }
         if (piece === 7 || piece === 11) {
             if(oldID === 0) {
                 document.getElementById(oldID).castling = false;
-            } 
+            }
             else if(oldID === 7) {
                 document.getElementById(oldID).castling = false;
-            } 
+            }
             else if(oldID === 4) {
-                document.getElementById(oldID).castling = false;            
+                document.getElementById(oldID).castling = false;
             }
         }
         if (piece === 5 && newID - oldID === 2) {
@@ -676,7 +676,7 @@ class Game {
             this.drawGame();
             return;
         }
-        console.log(Math.floor(newID / 8))
+
         if (piece === 0 && Math.floor(newID / 8) === 0) {
             this.board[oldID] = 12;
             this.board[newID] = 4;
@@ -711,12 +711,14 @@ class Game {
             if (this.board[newID] != 12) {
                 this.drawCaptured(this.board[newID]);
                 updateCapture(newID);
-                updateHistory(newID, piece, this.turn, 1, game.checkForChecks("w"), game.checkForChecks("b"));
+                this.board[oldID] = 12;
+                this.board[newID] = piece;
+                updateHistory(newID, piece, this.turn, 1, this.checkForChecks("w"), this.checkForChecks("b"));
             } else {
-                updateHistory(newID, piece, this.turn, 0, game.checkForChecks("w"), game.checkForChecks("b"));
+                this.board[oldID] = 12;
+                this.board[newID] = piece;
+                updateHistory(newID, piece, this.turn, 0, this.checkForChecks("w"), this.checkForChecks("b"));
             }
-            this.board[oldID] = 12;
-            this.board[newID] = piece;
             for (let i = 0; i < 64; i++) {
                 squares[i].classList.remove('active');
             }
@@ -730,7 +732,7 @@ class Game {
         }
     }
 
-    // Checks if there is any check currently on the board 
+    // Checks if there is any check currently on the board
     checkForChecks(color, board = this.board) {
         let moves = [];
         if (color === 'w') {
@@ -739,7 +741,7 @@ class Game {
                     moves = moves.concat(this.getMoves(i, false, board));
                 }
             }
-            if(moves.includes(board.indexOf(5))) {
+            if (moves.includes(board.indexOf(5))) {
                 return true;
             }
         }
@@ -749,7 +751,7 @@ class Game {
                     moves = moves.concat(this.getMoves(i, false, board));
                 }
             }
-            if(moves.includes(board.indexOf(11))) {
+            if (moves.includes(board.indexOf(11))) {
                 return true;
             }
         }
@@ -813,12 +815,10 @@ let history = [[["", ""], ["", ""], ["", ""], ["", ""]],
 [["", ""], ["", ""], ["", ""], ["", ""]]];
 try {
     temp = localStorage.history.split(",");
-    console.log(temp);
     for (let i = 0; i < 16; i++) {
         let set = [temp[i * 2], temp[i * 2 + 1]];
         history[Math.floor(i / 4)][(i % 4)] = set;
     }
-    console.log(history);
 } catch (SyntaxError) {
     console.log("No history - Using default value");
 }
@@ -858,9 +858,7 @@ function updateHistory(newID, piece, turn, capture, whiteCheck, blackCheck) {
     let rowNew = row[Math.floor(newID / 8)];
     let colNew = col[newID % 8];
     move += colNew + rowNew;
-    console.log(move); // Check for valid position
     //Implement + when check make happens later
-    // Note* - the + is implement below is wrong, but lets pretend it works (confused)
     // To save this moves in our tempHistory
     if (turn == "w") { // White turn
         if (blackCheck) move += "+";
@@ -886,7 +884,7 @@ function updateHistory(newID, piece, turn, capture, whiteCheck, blackCheck) {
             }
         }
     }
-    console.log(tempHistory);
+
     changeHistoryDisplay();
 }
 
