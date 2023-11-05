@@ -1,5 +1,11 @@
 # CPSC-349-Project-2
 
+Group Members: <br>
+Nathan Chen <br>
+Louis Oporto <br>
+Firas Alshami <br>
+Randell Lapid <br>
+
 ## GAME SAVES
 -New Game-
     A new game is made with all pieces in the starting position. If there was a previous game played it must be saved before creating a new game else it will be lost.
